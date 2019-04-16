@@ -1,0 +1,6 @@
+﻿  Source.cpp
+c:\sdl\pinball\source.cpp(217): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pinball\source.cpp(222): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pinball\source.cpp(223): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pinball\source.cpp(227): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+  Pinball.vcxproj -> C:\SDL\Pinball\Debug\Pinball.exe
