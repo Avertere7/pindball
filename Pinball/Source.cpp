@@ -5,11 +5,16 @@ and may not be redistributed without written permission.*/
 #include <SDL.h>
 #include <stdio.h>
 #include <SDL_image.h>
-
+#include <cmath>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+const int maxspeed = 100;
 
 //Starts up SDL and creates window
 bool init();
@@ -20,14 +25,70 @@ bool loadMedia();
 //Frees media and shuts down SDL
 void close();
 
-/*struct vector2d {
-	float x;
-	float y;
-};*/
+// test
 
 struct position {
 	float x;
 	float y;
+};
+class Rownanie
+{
+public:
+	bool  wykrycieKolizji()
+	{
+		printf("%s", "base");
+		return false;
+	}
+};
+class RownanieProstej  : public Rownanie{ //dla postaci ax+by+c=0
+public:
+	float a, b, c, wektorNormalnyY, wektorNormalnyX; //spolczynniki funkcji
+	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
+	bool lewa;
+
+	RownanieProstej(float a, float b, float c, float xMin, float xMax, float yMin, float yMax,bool lewa=false) {
+		this->a = a;
+		this->b = b;
+		this->c = c;
+		this->xMax = xMax;
+		this->xMin = xMin;
+		this->yMax = yMax;
+		this->yMin = yMin;
+		this->lewa = lewa;
+
+		wektorNormalnyX = (a / (a + b));
+		wektorNormalnyY = -(b / (a + b));
+	}
+
+	 bool wykrycieKolizji(float x, float y)
+	{
+		if(lewa)
+		{
+			if (xMin<x && xMax>x && yMin<y && yMax>y) {
+
+				if ((a*x + b * y + c) >= 0) {
+					return true;
+				}
+				else
+					return false;
+			}
+			return false;
+		}
+		else
+		{
+			if (xMin<x && xMax>x && yMin<y && yMax>y) {
+
+				if ((a*x + b * y + c) <= 0) {
+					return true;
+				}
+				else
+					return false;
+			}
+			return false;
+		}
+		return false;
+	}
+
 };
 
 class vector2d {
@@ -41,18 +102,38 @@ public:
 	void setY(float y) {
 		this->y = y;
 	}
-	float GetY() {
+	float getY() {
 		return y;
 	}
-	float GetX() {
+	float getX() {
 		return x;
 	}
 
 	float normalize() {
-	
+
 		return(x / (x + y), y / (x + y));
 
 	}
+
+	float iloczynSkalarny(float X, float Y) {
+		float iloczyn;
+		iloczyn = x * X + y * Y;
+		return iloczyn;
+	}
+
+	void odbicieOdProstej(RownanieProstej prosta) {
+		vector2d normalna;
+		normalna.setX(prosta.wektorNormalnyX);
+		normalna.setY(prosta.wektorNormalnyY);
+		float rx;
+		float ry;
+		rx = x - 2 * normalna.getX()*(normalna.getX()*x);
+		ry = y - 2 * normalna.getY()*(normalna.getY()*x);
+		printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
+		x = rx;
+		y = ry;
+	}
+
 };
 
 class MovableObject {
@@ -61,10 +142,72 @@ public:
 	vector2d acceleration;
 	SDL_Rect position;
 	SDL_Surface* image = NULL;
+	const float gravity = 0.5;
+	const float dt = 1 / 30.0; // przyrost czasu
+	MovableObject();
+
+	void SetAcceleration(float x, float y) {
+		float ay = acceleration.getY() + y;
+		float ax = acceleration.getX() + x;
+		acceleration.setY(ay);
+		acceleration.setX(ax);
+	}
+	void SetVelocity() {
+		float ax = velocity.getX() + acceleration.getX()*dt;
+		float ay = velocity.getY() + acceleration.getY()*dt;
+		velocity.setX(ax);
+		velocity.setY(ay);
+	/*	if (velocity.getX() > maxspeed)
+			velocity.setX(maxspeed);
+		if (velocity.getY() > maxspeed)
+			velocity.setY(maxspeed);*/
+
+	}
+	void Gravity() {
+		float g = acceleration.getY() + 0.02;
+		acceleration.setY(g);
+		acceleration.setX(acceleration.getX());
+
+	}
 
 };
 
+MovableObject::MovableObject()
+{
+	acceleration.setY(0.0f);
+	acceleration.setX(0.0f);
+	velocity.setY(0.0f);
+	velocity.setX(0.0f);
+}
 
+class  RownanieOkregu :Rownanie {
+public:
+	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
+	float a, b, r; //(x-a)^2+(y-b)^2=r^
+
+
+	RownanieOkregu(float a, float b, float r, float xMin, float xMax, float yMin, float yMax) {
+		this->a = a;
+		this->b = b;
+		this->r = r;
+		this->xMax = xMax;
+		this->xMin = xMin;
+		this->yMax = yMax;
+		this->yMin = yMin;
+	}
+	RownanieProstej prostopadlaWpunkcie(int wspX, int wspY) {
+		float A = wspX - a;
+		float B = wspY - b;
+		float C = -(wspX - a)*a - (wspY - b)*b - pow(r, 2);
+		RownanieProstej prosta(A, B, C, 0, 800, 0, 600);
+		return prosta;
+	}
+	bool wykrycieKolizji()
+	{
+		return false;
+	}
+
+};
 
 
 
@@ -152,91 +295,159 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-	
+
 
 	}
-	
 
-		//Load media
-		if (!loadMedia())
+
+	//Load media
+	if (!loadMedia())
+	{
+		printf("Failed to load media!\n");
+	}
+	else
+	{
+
+		MovableObject Ball;
+		IMG_Init(IMG_INIT_PNG);
+		Ball.image = IMG_Load("images/ball.PNG");
+		Ball.position.x = 40;
+		Ball.position.y = 40;
+		Ball.position.h = Ball.image->h;
+		Ball.position.w = Ball.image->w;
+		Ball.velocity.setX(0);
+		Ball.velocity.setY(0);
+
+		std::vector<RownanieProstej*> kolaidery;
+		kolaidery.reserve(99);
+		RownanieProstej pierwsza(1, 0, -700, -5, 800, -5, 800,true);
+		RownanieProstej druga(1, 0, 0, -5, 800, -5, 800);
+		RownanieProstej trzecia(0, 1, 0, -5, 800, -5, 800);
+		RownanieProstej czwarta(0, 1, -500, -5, 800, -5, 800,true);
+		kolaidery.push_back(&pierwsza);
+		kolaidery.push_back(&druga);
+		kolaidery.push_back(&trzecia);
+		kolaidery.push_back(&czwarta);
+		//kolaidery.push_back(RownanieProstej(1,2,3,4,5,6,7));
+		
+
+		
+
+
+		//Apply the image
+		//SDL_BlitSurface(gHelloWorld, NULL, gScreenSurface, NULL);
+		SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
+		SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
+		//Update the surface
+		SDL_UpdateWindowSurface(Window);
+
+		//Wait two seconds
+		bool quit = false;
+		SDL_Event e;
+		int FPS = 30;
+		int FrameStartTimeMs = 0;
+
+		while (!quit)
 		{
-			printf("Failed to load media!\n");
-		}
-		else
-		{
-
-			MovableObject Ball;
-			IMG_Init(IMG_INIT_PNG);
-			Ball.image = IMG_Load("images/ball.PNG");
-			Ball.position.x = 0;
-			Ball.position.y = 0;
-			Ball.position.h = Ball.image->h;
-			Ball.position.w = Ball.image->w;
-			Ball.velocity.setX(0);
-			Ball.velocity.setY(0);
-			Ball.acceleration.setX(0);
-			Ball.acceleration.setY(0);
-
-
-
-			//Apply the image
-			//SDL_BlitSurface(gHelloWorld, NULL, gScreenSurface, NULL);
-			SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
-			SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
-			//Update the surface
-			SDL_UpdateWindowSurface(Window);
-
-			//Wait two seconds
-			bool quit = false;
-			SDL_Event e;
-			int FPS = 60;
-			int FrameStartTimeMs = 0;
-
-			while (!quit)
+			FrameStartTimeMs = SDL_GetTicks();
+			//Handle events on queue
+			while (SDL_PollEvent(&e) != 0)
 			{
-				FrameStartTimeMs = SDL_GetTicks();
-				//Handle events on queue
-				while (SDL_PollEvent(&e) != 0)
-				{
 
-					//if (e.type == SDL_KEYUP) {
+				//if (e.type == SDL_KEYUP) {
 
-						if (e.key.keysym.sym == SDLK_DOWN)Ball.velocity.setY(Ball.velocity.GetY()+1);
-						if (e.key.keysym.sym == SDLK_UP)Ball.velocity.setY(Ball.velocity.GetY()-1);
-						if (e.key.keysym.sym == SDLK_RIGHT)Ball.velocity.setX(Ball.velocity.GetX()+1);
-						if (e.key.keysym.sym == SDLK_LEFT)Ball.velocity.setX(Ball.velocity.GetX()-1);
-						if (e.key.keysym.sym == SDLK_ESCAPE)quit = true;
+				//if (e.key.keysym.sym == SDLK_DOWN)Ball.velocity.setY(Ball.velocity.getY() + 1);
+				//if (e.key.keysym.sym == SDLK_UP)Ball.velocity.setY(Ball.velocity.getY() - 1);
+				//if (e.key.keysym.sym == SDLK_RIGHT)Ball.velocity.setX(Ball.velocity.getX() + 1);
+				//if (e.key.keysym.sym == SDLK_LEFT)Ball.velocity.setX(Ball.velocity.getX() - 1);
+				//if (e.key.keysym.sym == SDLK_ESCAPE)quit = true;
+
+
+				if (e.key.keysym.sym == SDLK_DOWN)Ball.SetAcceleration(0, 0.5);
+				if (e.key.keysym.sym == SDLK_UP)Ball.SetAcceleration(0, -0.5);
+				if (e.key.keysym.sym == SDLK_RIGHT)Ball.SetAcceleration(0.5, 0);
+				if (e.key.keysym.sym == SDLK_LEFT)Ball.SetAcceleration(-0.5, 0);
+				if (e.key.keysym.sym == SDLK_ESCAPE)quit = true;
 				//	}
 					//User requests quit
-					if (e.type == SDL_QUIT)
-					{
-						quit = true;
-					}
+				if (e.type == SDL_QUIT)
+				{
+					quit = true;
 				}
-				if (Ball.position.x > 300) {
-					Ball.velocity.setX(-Ball.velocity.GetX()*0.4);
-				}
-				//if (Ball.position.x = 0) {
-				//	Ball.velocity.setX(-Ball.velocity.GetX());
-				//}
-				Ball.position.x = Ball.position.x + Ball.velocity.GetX();
-				Ball.position.y = Ball.position.y + Ball.velocity.GetY();
-				SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
-				SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
-				SDL_UpdateWindowSurface(Window);
-				while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
-				
 			}
-			
-		
-			
-		}
-		
 
-	
+	/*		std::for_each(kolaidery.begin(), kolaidery.end(),
+				[](Rownanie * rownanie)
+			{ 
+
+				rownanie->wykrycieKolizj(Ball.position.x, Ball.position.y);
+
+			}
+			);*/
+
+			for (auto &collider : kolaidery)
+			{
+				if (collider->wykrycieKolizji(Ball.position.x, Ball.position.y))
+				{
+					Ball.velocity.odbicieOdProstej(*collider);
+					Ball.acceleration.odbicieOdProstej(*collider);
+				}
+			}
+		/*	if (pierwsza.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
+			{
+				Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
+				Ball.velocity.setX(-Ball.velocity.getX()*0.5);
+			}
+			else
+				if (druga.wykrycieKolizjiPrawej(Ball.position.x, Ball.position.y))
+				{
+
+					Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
+					Ball.velocity.setX(-Ball.velocity.getX()*0.5);
+				}
+				else
+					if (trzecia.wykrycieKolizjiPrawej(Ball.position.x, Ball.position.y))
+					{
+
+						Ball.acceleration.setY(-Ball.acceleration.getY()*0.5);
+						Ball.velocity.setY(-Ball.velocity.getY()*0.5);
+					}
+					else
+						if (czwarta.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
+						{
+
+							Ball.acceleration.setY(-Ball.acceleration.getY()*0.1);
+							Ball.velocity.setY(-Ball.velocity.getY()*0.4);
+						}*/
+
+			Ball.Gravity();
+			Ball.SetVelocity();
+
+			//printf("%f\n", Ball.position.y);
+
+
+			Ball.position.x = Ball.position.x + Ball.velocity.getX();
+			Ball.position.y = Ball.position.y + Ball.velocity.getY();
+			SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
+			SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
+
+
+			SDL_UpdateWindowSurface(Window);
+			while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
+
+		}
+
+
+
+	}
+
+
+
 
 	//Free resources and close SDL
 	close();
 
 	return 0;
 }
+
+
