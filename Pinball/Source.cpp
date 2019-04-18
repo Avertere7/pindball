@@ -7,11 +7,14 @@ and may not be redistributed without written permission.*/
 #include <SDL_image.h>
 #include <cmath>
 #include <string>
-
+#include <vector>
+#include <algorithm>
+#include <iostream>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+const int maxspeed = 100;
 
 //Starts up SDL and creates window
 bool init();
@@ -28,13 +31,22 @@ struct position {
 	float x;
 	float y;
 };
-
-class RownanieProstej { //dla postaci ax+by+c=0
+class Rownanie
+{
+public:
+	bool  wykrycieKolizji()
+	{
+		printf("%s", "base");
+		return false;
+	}
+};
+class RownanieProstej  : public Rownanie{ //dla postaci ax+by+c=0
 public:
 	float a, b, c, wektorNormalnyY, wektorNormalnyX; //spolczynniki funkcji
 	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
+	bool lewa;
 
-	RownanieProstej(float a, float b, float c, float xMin, float xMax, float yMin, float yMax) {
+	RownanieProstej(float a, float b, float c, float xMin, float xMax, float yMin, float yMax,bool lewa=false) {
 		this->a = a;
 		this->b = b;
 		this->c = c;
@@ -42,32 +54,37 @@ public:
 		this->xMin = xMin;
 		this->yMax = yMax;
 		this->yMin = yMin;
+		this->lewa = lewa;
 
 		wektorNormalnyX = (a / (a + b));
-		wektorNormalnyY = (b / (a + b));
+		wektorNormalnyY = -(b / (a + b));
 	}
 
+	 bool wykrycieKolizji(float x, float y)
+	{
+		if(lewa)
+		{
+			if (xMin<x && xMax>x && yMin<y && yMax>y) {
 
-	bool wykrycieKolizjiLewej(float x, float y) {
-		if (xMin<x && xMax>x && yMin<y && yMax>y) {
-
-			if ((a*x + b * y + c) >= 0) {
-				return true;
+				if ((a*x + b * y + c) >= 0) {
+					return true;
+				}
+				else
+					return false;
 			}
-			else
-				return false;
+			return false;
 		}
-		return false;
-	}
+		else
+		{
+			if (xMin<x && xMax>x && yMin<y && yMax>y) {
 
-	bool wykrycieKolizjiPrawej(float x, float y) {
-		if (xMin<x && xMax>x && yMin<y && yMax>y) {
-
-			if ((a*x + b * y + c) <= 0) {
-				return true;
+				if ((a*x + b * y + c) <= 0) {
+					return true;
+				}
+				else
+					return false;
 			}
-			else
-				return false;
+			return false;
 		}
 		return false;
 	}
@@ -112,6 +129,7 @@ public:
 		float ry;
 		rx = x - 2 * normalna.getX()*(normalna.getX()*x);
 		ry = y - 2 * normalna.getY()*(normalna.getY()*x);
+		printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
 		x = rx;
 		y = ry;
 	}
@@ -139,6 +157,11 @@ public:
 		float ay = velocity.getY() + acceleration.getY()*dt;
 		velocity.setX(ax);
 		velocity.setY(ay);
+	/*	if (velocity.getX() > maxspeed)
+			velocity.setX(maxspeed);
+		if (velocity.getY() > maxspeed)
+			velocity.setY(maxspeed);*/
+
 	}
 	void Gravity() {
 		float g = acceleration.getY() + 0.02;
@@ -157,7 +180,7 @@ MovableObject::MovableObject()
 	velocity.setX(0.0f);
 }
 
-class  RownanieOkregu {
+class  RownanieOkregu :Rownanie {
 public:
 	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
 	float a, b, r; //(x-a)^2+(y-b)^2=r^
@@ -178,6 +201,10 @@ public:
 		float C = -(wspX - a)*a - (wspY - b)*b - pow(r, 2);
 		RownanieProstej prosta(A, B, C, 0, 800, 0, 600);
 		return prosta;
+	}
+	bool wykrycieKolizji()
+	{
+		return false;
 	}
 
 };
@@ -291,11 +318,20 @@ int main(int argc, char* args[])
 		Ball.velocity.setX(0);
 		Ball.velocity.setY(0);
 
-
-		RownanieProstej pierwsza(1, 0, -700, -5, 800, -5, 800);
+		std::vector<RownanieProstej*> kolaidery;
+		kolaidery.reserve(99);
+		RownanieProstej pierwsza(1, 0, -700, -5, 800, -5, 800,true);
 		RownanieProstej druga(1, 0, 0, -5, 800, -5, 800);
 		RownanieProstej trzecia(0, 1, 0, -5, 800, -5, 800);
-		RownanieProstej czwarta(0, 1, -500, -5, 800, -5, 800);
+		RownanieProstej czwarta(0, 1, -500, -5, 800, -5, 800,true);
+		kolaidery.push_back(&pierwsza);
+		kolaidery.push_back(&druga);
+		kolaidery.push_back(&trzecia);
+		kolaidery.push_back(&czwarta);
+		//kolaidery.push_back(RownanieProstej(1,2,3,4,5,6,7));
+		
+
+		
 
 
 		//Apply the image
@@ -340,9 +376,24 @@ int main(int argc, char* args[])
 				}
 			}
 
+	/*		std::for_each(kolaidery.begin(), kolaidery.end(),
+				[](Rownanie * rownanie)
+			{ 
 
+				rownanie->wykrycieKolizj(Ball.position.x, Ball.position.y);
 
-			if (pierwsza.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
+			}
+			);*/
+
+			for (auto &collider : kolaidery)
+			{
+				if (collider->wykrycieKolizji(Ball.position.x, Ball.position.y))
+				{
+					Ball.velocity.odbicieOdProstej(*collider);
+					Ball.acceleration.odbicieOdProstej(*collider);
+				}
+			}
+		/*	if (pierwsza.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
 			{
 				Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
 				Ball.velocity.setX(-Ball.velocity.getX()*0.5);
@@ -367,12 +418,12 @@ int main(int argc, char* args[])
 
 							Ball.acceleration.setY(-Ball.acceleration.getY()*0.1);
 							Ball.velocity.setY(-Ball.velocity.getY()*0.4);
-						}
+						}*/
 
 			Ball.Gravity();
 			Ball.SetVelocity();
 
-			printf("%f\n", Ball.position.y);
+			//printf("%f\n", Ball.position.y);
 
 
 			Ball.position.x = Ball.position.x + Ball.velocity.getX();
