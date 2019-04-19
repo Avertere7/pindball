@@ -57,7 +57,11 @@ public:
 		this->lewa = lewa;
 
 		wektorNormalnyX = (a / (a + b));
-		wektorNormalnyY = -(b / (a + b));
+		wektorNormalnyY = (b / (a + b));
+		if (lewa) {
+			wektorNormalnyX = -wektorNormalnyX;
+			wektorNormalnyY = -wektorNormalnyY;
+		}
 	}
 
 	 bool wykrycieKolizji(float x, float y)
@@ -127,9 +131,9 @@ public:
 		normalna.setY(prosta.wektorNormalnyY);
 		float rx;
 		float ry;
-		rx = x - 2 * normalna.getX()*(normalna.getX()*x);
-		ry = y - 2 * normalna.getY()*(normalna.getY()*x);
-		printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
+		rx = x - 2 * (x*normalna.getX()+y*normalna.getY())*normalna.getX();
+		ry = y - 2 * (x*normalna.getX() + y * normalna.getY())*normalna.getY();
+		//printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
 		x = rx;
 		y = ry;
 	}
@@ -164,7 +168,7 @@ public:
 
 	}
 	void Gravity() {
-		float g = acceleration.getY() + 0.02;
+		float g = acceleration.getY() + 0.2;
 		acceleration.setY(g);
 		acceleration.setX(acceleration.getX());
 
@@ -344,7 +348,7 @@ int main(int argc, char* args[])
 		//Wait two seconds
 		bool quit = false;
 		SDL_Event e;
-		int FPS = 30;
+		int FPS = 60;
 		int FrameStartTimeMs = 0;
 
 		while (!quit)
@@ -389,38 +393,21 @@ int main(int argc, char* args[])
 			{
 				if (collider->wykrycieKolizji(Ball.position.x, Ball.position.y))
 				{
-					Ball.velocity.odbicieOdProstej(*collider);
-					Ball.acceleration.odbicieOdProstej(*collider);
+					Ball.position.x = Ball.position.x - Ball.velocity.getX();
+					Ball.position.y = Ball.position.y - Ball.velocity.getY();
+					/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lewa) { return 1 }
+					else { return-1 });*/
+					Ball.velocity.odbicieOdProstej(czwarta);
+					Ball.acceleration.odbicieOdProstej(czwarta);
+
+				Ball.velocity.setY(Ball.velocity.getY()*0.1);
+				Ball.acceleration.setY(Ball.velocity.getY()*0.1);
+				printf("kolizja \n");
 				}
 			}
-		/*	if (pierwsza.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
-			{
-				Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
-				Ball.velocity.setX(-Ball.velocity.getX()*0.5);
-			}
-			else
-				if (druga.wykrycieKolizjiPrawej(Ball.position.x, Ball.position.y))
-				{
+		
 
-					Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
-					Ball.velocity.setX(-Ball.velocity.getX()*0.5);
-				}
-				else
-					if (trzecia.wykrycieKolizjiPrawej(Ball.position.x, Ball.position.y))
-					{
-
-						Ball.acceleration.setY(-Ball.acceleration.getY()*0.5);
-						Ball.velocity.setY(-Ball.velocity.getY()*0.5);
-					}
-					else
-						if (czwarta.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
-						{
-
-							Ball.acceleration.setY(-Ball.acceleration.getY()*0.1);
-							Ball.velocity.setY(-Ball.velocity.getY()*0.4);
-						}*/
-
-			Ball.Gravity();
+			//Ball.Gravity();
 			Ball.SetVelocity();
 
 			//printf("%f\n", Ball.position.y);
@@ -428,6 +415,51 @@ int main(int argc, char* args[])
 
 			Ball.position.x = Ball.position.x + Ball.velocity.getX();
 			Ball.position.y = Ball.position.y + Ball.velocity.getY();
+			//printf("predkosc Y:\n %f\n", Ball.acceleration.getY());
+			printf("predkosc x: \n %f\n", Ball.acceleration.getX());
+
+			/*if (pierwsza.wykrycieKolizji(Ball.position.x, Ball.position.y))
+			{
+				printf("kolizja prawo\n %f\n", Ball.velocity.getY());
+				Ball.position.x = Ball.position.x - Ball.velocity.getX();
+				Ball.position.y = Ball.position.y - Ball.velocity.getY();
+				Ball.acceleration.setX(-Ball.acceleration.getX()*0.3);
+				Ball.velocity.setX(-Ball.velocity.getX()*0.3);
+			}
+			else
+				if (druga.wykrycieKolizji(Ball.position.x, Ball.position.y))
+				{
+					printf("kolizja lewo \n %f\n", Ball.velocity.getY());
+					Ball.position.x = Ball.position.x - Ball.velocity.getX();
+					Ball.position.y = Ball.position.y - Ball.velocity.getY();
+					Ball.acceleration.setX(-Ball.acceleration.getX()*0.3);
+					Ball.velocity.setX(-Ball.velocity.getX()*0.3);
+				}
+				else
+					if (trzecia.wykrycieKolizji(Ball.position.x, Ball.position.y))
+					{
+						printf("kolizja gora\n %f\n", Ball.velocity.getY());
+						Ball.position.x = Ball.position.x - Ball.velocity.getX();
+						Ball.position.y = Ball.position.y - Ball.velocity.getY();
+						Ball.acceleration.setY(-Ball.acceleration.getY()*0.3);
+						Ball.velocity.setY(-Ball.velocity.getY()*0.3);
+					}
+					else
+						if (czwarta.wykrycieKolizji(Ball.position.x, Ball.position.y))
+						{
+							printf("kolizja dol\n %f\n", Ball.acceleration.getY());
+							if (Ball.velocity.getY() > -2 && Ball.velocity.getY() < 2) {
+								Ball.velocity.setY(0);
+								Ball.acceleration.setY(0);
+
+							}
+							Ball.position.x = Ball.position.x - Ball.velocity.getX();
+							Ball.position.y = Ball.position.y - Ball.velocity.getY();
+							Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + 1);
+							Ball.velocity.setY(-Ball.velocity.getY()*0.1);
+						}*/
+
+
 			SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
 			SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
 
