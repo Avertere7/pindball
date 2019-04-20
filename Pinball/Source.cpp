@@ -134,8 +134,11 @@ public:
 		rx = x - 2 * (x*normalna.getX()+y*normalna.getY())*normalna.getX();
 		ry = y - 2 * (x*normalna.getX() + y * normalna.getY())*normalna.getY();
 		//printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
-		x = rx;
-		y = ry;
+		
+			x = rx;
+			y = ry;
+		
+
 	}
 
 };
@@ -397,11 +400,13 @@ int main(int argc, char* args[])
 					Ball.position.y = Ball.position.y - Ball.velocity.getY();
 					/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lewa) { return 1 }
 					else { return-1 });*/
-					Ball.velocity.odbicieOdProstej(czwarta);
-					Ball.acceleration.odbicieOdProstej(czwarta);
+					Ball.velocity.odbicieOdProstej(*collider);
+					Ball.acceleration.odbicieOdProstej(*collider);
 
-				Ball.velocity.setY(Ball.velocity.getY()*0.1);
-				Ball.acceleration.setY(Ball.velocity.getY()*0.1);
+				Ball.velocity.setY(Ball.velocity.getY()*0.5);
+				Ball.acceleration.setY(Ball.velocity.getY()*0.5);
+				Ball.velocity.setX(Ball.velocity.getX()*0.5);
+				Ball.acceleration.setX(Ball.velocity.getX()*0.5);
 				printf("kolizja \n");
 				}
 			}
