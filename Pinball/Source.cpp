@@ -31,16 +31,16 @@ struct position {
 	float x;
 	float y;
 };
-class Rownanie
-{
-public:
-	bool  wykrycieKolizji()
-	{
-		printf("%s", "base");
-		return false;
-	}
-};
-class RownanieProstej  : public Rownanie{ //dla postaci ax+by+c=0
+//class Rownanie
+//{
+//public:
+//	bool  wykrycieKolizji()
+//	{
+//		printf("%s", "base");
+//		return false;
+//	}
+//};
+class RownanieProstej  { //dla postaci ax+by+c=0
 public:
 	float a, b, c, wektorNormalnyY, wektorNormalnyX; //spolczynniki funkcji
 	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
@@ -133,7 +133,7 @@ public:
 		float ry;
 		rx = x - 2 * (x*normalna.getX()+y*normalna.getY())*normalna.getX();
 		ry = y - 2 * (x*normalna.getX() + y * normalna.getY())*normalna.getY();
-		//printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
+		printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
 		
 			x = rx;
 			y = ry;
@@ -171,7 +171,7 @@ public:
 
 	}
 	void Gravity() {
-		float g = acceleration.getY() + 0.2;
+		float g = acceleration.getY() + 0.5;
 		acceleration.setY(g);
 		acceleration.setX(acceleration.getX());
 
@@ -187,7 +187,7 @@ MovableObject::MovableObject()
 	velocity.setX(0.0f);
 }
 
-class  RownanieOkregu :Rownanie {
+class  RownanieOkregu  {
 public:
 	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
 	float a, b, r; //(x-a)^2+(y-b)^2=r^
@@ -215,6 +215,8 @@ public:
 		{
 			return true;
 		}
+		/*if (sqrt(pow(wspX - a, 2) + pow(wspY - b, 2)) >= r)
+			return true;*/
 
 		return false;
 	}
@@ -346,7 +348,7 @@ int main(int argc, char* args[])
 		kolaideryO.reserve(99);
 		RownanieOkregu pierwszaO(300, 300,50,0,800,0,600);
 
-		kolaidery.push_back(&pierwsza);
+		kolaideryO.push_back(&pierwszaO);
 		
 
 		//Apply the image
@@ -412,7 +414,7 @@ int main(int argc, char* args[])
 				}
 			}
 			
-				/*if (pierwszaO.wykrycieKolizji(Ball.position.x, Ball.position.y))
+				if (pierwszaO.wykrycieKolizji(Ball.position.x, Ball.position.y))
 				{
 					printf("predkosc x:%f \n", Ball.velocity.getX());
 					printf("predkosc Y:%f \n", Ball.velocity.getY());
@@ -436,11 +438,11 @@ int main(int argc, char* args[])
 					printf("predkosc Y:%f \n", Ball.velocity.getY());
 					printf("wspolrzedne x:%f \n", Ball.position.x);
 					printf("wspolrzedne y:%f \n", Ball.position.y);
-				}*/
+				}
 			
 		
 
-			//Ball.Gravity();
+		//	Ball.Gravity();
 			Ball.SetVelocity();
 
 			//printf("%f\n", Ball.position.y);
