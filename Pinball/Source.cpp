@@ -31,16 +31,16 @@ struct position {
 	float x;
 	float y;
 };
-class Rownanie
-{
-public:
-	bool  wykrycieKolizji()
-	{
-		printf("%s", "base");
-		return false;
-	}
-};
-class RownanieProstej  : public Rownanie{ //dla postaci ax+by+c=0
+//class Rownanie
+//{
+//public:
+//	bool  wykrycieKolizji()
+//	{
+//		printf("%s", "base");
+//		return false;
+//	}
+//};
+class RownanieProstej  { //dla postaci ax+by+c=0
 public:
 	float a, b, c, wektorNormalnyY, wektorNormalnyX; //spolczynniki funkcji
 	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
@@ -57,7 +57,11 @@ public:
 		this->lewa = lewa;
 
 		wektorNormalnyX = (a / (a + b));
-		wektorNormalnyY = -(b / (a + b));
+		wektorNormalnyY = (b / (a + b));
+		if (lewa) {
+			wektorNormalnyX = -wektorNormalnyX;
+			wektorNormalnyY = -wektorNormalnyY;
+		}
 	}
 
 	 bool wykrycieKolizji(float x, float y)
@@ -127,11 +131,14 @@ public:
 		normalna.setY(prosta.wektorNormalnyY);
 		float rx;
 		float ry;
-		rx = x - 2 * normalna.getX()*(normalna.getX()*x);
-		ry = y - 2 * normalna.getY()*(normalna.getY()*x);
+		rx = x - 2 * (x*normalna.getX()+y*normalna.getY())*normalna.getX();
+		ry = y - 2 * (x*normalna.getX() + y * normalna.getY())*normalna.getY();
 		printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
-		x = rx;
-		y = ry;
+		
+			x = rx;
+			y = ry;
+		
+
 	}
 
 };
@@ -164,7 +171,7 @@ public:
 
 	}
 	void Gravity() {
-		float g = acceleration.getY() + 0.02;
+		float g = acceleration.getY() + 0.5;
 		acceleration.setY(g);
 		acceleration.setX(acceleration.getX());
 
@@ -180,7 +187,7 @@ MovableObject::MovableObject()
 	velocity.setX(0.0f);
 }
 
-class  RownanieOkregu :Rownanie {
+class  RownanieOkregu  {
 public:
 	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
 	float a, b, r; //(x-a)^2+(y-b)^2=r^
@@ -202,8 +209,15 @@ public:
 		RownanieProstej prosta(A, B, C, 0, 800, 0, 600);
 		return prosta;
 	}
-	bool wykrycieKolizji()
+	bool wykrycieKolizji(float wspX, float wspY)
 	{
+		if(((wspX-a)*(wspX - a))+((wspY-b)*(wspX - b))-(r*r)>=0)
+		{
+			return true;
+		}
+		/*if (sqrt(pow(wspX - a, 2) + pow(wspY - b, 2)) >= r)
+			return true;*/
+
 		return false;
 	}
 
@@ -311,8 +325,8 @@ int main(int argc, char* args[])
 		MovableObject Ball;
 		IMG_Init(IMG_INIT_PNG);
 		Ball.image = IMG_Load("images/ball.PNG");
-		Ball.position.x = 40;
-		Ball.position.y = 40;
+		Ball.position.x = 300;
+		Ball.position.y = 300;
 		Ball.position.h = Ball.image->h;
 		Ball.position.w = Ball.image->w;
 		Ball.velocity.setX(0);
@@ -330,9 +344,12 @@ int main(int argc, char* args[])
 		kolaidery.push_back(&czwarta);
 		//kolaidery.push_back(RownanieProstej(1,2,3,4,5,6,7));
 		
+		std::vector<RownanieOkregu*> kolaideryO;
+		kolaideryO.reserve(99);
+		RownanieOkregu pierwszaO(300, 300,50,0,800,0,600);
 
+		kolaideryO.push_back(&pierwszaO);
 		
-
 
 		//Apply the image
 		//SDL_BlitSurface(gHelloWorld, NULL, gScreenSurface, NULL);
@@ -344,7 +361,7 @@ int main(int argc, char* args[])
 		//Wait two seconds
 		bool quit = false;
 		SDL_Event e;
-		int FPS = 30;
+		int FPS = 60;
 		int FrameStartTimeMs = 0;
 
 		while (!quit)
@@ -354,13 +371,6 @@ int main(int argc, char* args[])
 			while (SDL_PollEvent(&e) != 0)
 			{
 
-				//if (e.type == SDL_KEYUP) {
-
-				//if (e.key.keysym.sym == SDLK_DOWN)Ball.velocity.setY(Ball.velocity.getY() + 1);
-				//if (e.key.keysym.sym == SDLK_UP)Ball.velocity.setY(Ball.velocity.getY() - 1);
-				//if (e.key.keysym.sym == SDLK_RIGHT)Ball.velocity.setX(Ball.velocity.getX() + 1);
-				//if (e.key.keysym.sym == SDLK_LEFT)Ball.velocity.setX(Ball.velocity.getX() - 1);
-				//if (e.key.keysym.sym == SDLK_ESCAPE)quit = true;
 
 
 				if (e.key.keysym.sym == SDLK_DOWN)Ball.SetAcceleration(0, 0.5);
@@ -389,38 +399,50 @@ int main(int argc, char* args[])
 			{
 				if (collider->wykrycieKolizji(Ball.position.x, Ball.position.y))
 				{
+					Ball.position.x = Ball.position.x - Ball.velocity.getX();
+					Ball.position.y = Ball.position.y - Ball.velocity.getY();
+					/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lewa) { return 1 }
+					else { return-1 });*/
 					Ball.velocity.odbicieOdProstej(*collider);
 					Ball.acceleration.odbicieOdProstej(*collider);
+
+				Ball.velocity.setY(Ball.velocity.getY()*0.5);
+				Ball.acceleration.setY(Ball.velocity.getY()*0.5);
+				Ball.velocity.setX(Ball.velocity.getX()*0.5);
+				Ball.acceleration.setX(Ball.velocity.getX()*0.5);
+				//printf("kolizja \n");
 				}
 			}
-		/*	if (pierwsza.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
-			{
-				Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
-				Ball.velocity.setX(-Ball.velocity.getX()*0.5);
-			}
-			else
-				if (druga.wykrycieKolizjiPrawej(Ball.position.x, Ball.position.y))
+			
+				if (pierwszaO.wykrycieKolizji(Ball.position.x, Ball.position.y))
 				{
+					printf("predkosc x:%f \n", Ball.velocity.getX());
+					printf("predkosc Y:%f \n", Ball.velocity.getY());
 
-					Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
-					Ball.velocity.setX(-Ball.velocity.getX()*0.5);
+					Ball.position.x = Ball.position.x - Ball.velocity.getX();
+					Ball.position.y = Ball.position.y - Ball.velocity.getY();
+					
+					RownanieProstej pom(0,0,0,0,0,0,0);
+					pom= pierwszaO.prostopadlaWpunkcie(Ball.position.x, Ball.position.y);
+					
+
+					Ball.velocity.odbicieOdProstej(pom);
+					Ball.acceleration.odbicieOdProstej(pom);
+
+					Ball.velocity.setY(Ball.velocity.getY()*0.5);
+					Ball.acceleration.setY(Ball.velocity.getY()*0.5);
+					Ball.velocity.setX(Ball.velocity.getX()*0.5);
+					Ball.acceleration.setX(Ball.velocity.getX()*0.5);
+					printf("kolizja \n");
+					printf("predkosc x:%f \n",Ball.velocity.getX());
+					printf("predkosc Y:%f \n", Ball.velocity.getY());
+					printf("wspolrzedne x:%f \n", Ball.position.x);
+					printf("wspolrzedne y:%f \n", Ball.position.y);
 				}
-				else
-					if (trzecia.wykrycieKolizjiPrawej(Ball.position.x, Ball.position.y))
-					{
+			
+		
 
-						Ball.acceleration.setY(-Ball.acceleration.getY()*0.5);
-						Ball.velocity.setY(-Ball.velocity.getY()*0.5);
-					}
-					else
-						if (czwarta.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
-						{
-
-							Ball.acceleration.setY(-Ball.acceleration.getY()*0.1);
-							Ball.velocity.setY(-Ball.velocity.getY()*0.4);
-						}*/
-
-			Ball.Gravity();
+		//	Ball.Gravity();
 			Ball.SetVelocity();
 
 			//printf("%f\n", Ball.position.y);
@@ -428,6 +450,11 @@ int main(int argc, char* args[])
 
 			Ball.position.x = Ball.position.x + Ball.velocity.getX();
 			Ball.position.y = Ball.position.y + Ball.velocity.getY();
+			//printf("predkosc Y:\n %f\n", Ball.acceleration.getY());
+			//printf("predkosc x: \n %f\n", Ball.acceleration.getX());
+
+
+
 			SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
 			SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
 
