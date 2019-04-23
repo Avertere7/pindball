@@ -27,6 +27,45 @@ void close();
 
 // test
 
+void DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centreY, int32_t radius)
+{
+	const int32_t diameter = (radius * 2);
+
+	int32_t x = (radius - 1);
+	int32_t y = 0;
+	int32_t tx = 1;
+	int32_t ty = 1;
+	int32_t error = (tx - diameter);
+
+	while (x >= y)
+	{
+		//  Each of the following renders an octant of the circle
+		SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
+		SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
+		SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
+		SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
+		SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
+		SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
+		SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
+		SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
+
+		if (error <= 0)
+		{
+			++y;
+			error += ty;
+			ty += 2;
+		}
+
+		if (error > 0)
+		{
+			--x;
+			tx += 2;
+			error += (tx - diameter);
+		}
+	}
+}
+
+
 struct position {
 	float x;
 	float y;
@@ -140,6 +179,7 @@ public:
 		
 
 	}
+	
 
 };
 
@@ -346,7 +386,7 @@ int main(int argc, char* args[])
 		
 		std::vector<RownanieOkregu*> kolaideryO;
 		kolaideryO.reserve(99);
-		RownanieOkregu pierwszaO(300, 300,50,0,800,0,600);
+		RownanieOkregu pierwszaO(300, 300,100,0,800,0,600);
 
 		kolaideryO.push_back(&pierwszaO);
 		
@@ -416,7 +456,7 @@ int main(int argc, char* args[])
 				}
 			}
 			
-				/*if (pierwszaO.wykrycieKolizji(Ball.position.x, Ball.position.y))
+				if (pierwszaO.wykrycieKolizji(Ball.position.x, Ball.position.y))
 				{
 					printf("predkosc x:%f \n", Ball.velocity.getX());
 					printf("predkosc Y:%f \n", Ball.velocity.getY());
@@ -431,16 +471,16 @@ int main(int argc, char* args[])
 					Ball.velocity.odbicieOdProstej(pom);
 					Ball.acceleration.odbicieOdProstej(pom);
 
-					Ball.velocity.setY(Ball.velocity.getY()*0.5);
-					Ball.acceleration.setY(Ball.velocity.getY()*0.5);
-					Ball.velocity.setX(Ball.velocity.getX()*0.5);
-					Ball.acceleration.setX(Ball.velocity.getX()*0.5);
+					Ball.velocity.setY(Ball.velocity.getY()*1);
+					Ball.acceleration.setY(Ball.velocity.getY()*0);
+					Ball.velocity.setX(Ball.velocity.getX()*1);
+					Ball.acceleration.setX(Ball.velocity.getX()*0);
 					printf("kolizja \n");
 					printf("predkosc x:%f \n",Ball.velocity.getX());
 					printf("predkosc Y:%f \n", Ball.velocity.getY());
-					printf("wspolrzedne x:%f \n", Ball.position.x);
-					printf("wspolrzedne y:%f \n", Ball.position.y);
-				}*/
+					printf("wspolrzedne x:%i \n", Ball.position.x);
+					printf("wspolrzedne y:%i \n", Ball.position.y);
+				}
 			
 		
 
@@ -463,10 +503,12 @@ int main(int argc, char* args[])
 			SDL_QueryTexture(table, NULL, NULL, &w,&h);
 
 			SDL_RenderClear(renderer);
-			
 			SDL_RenderCopy(renderer, table, NULL, &texr);
+			DrawCircle(renderer, 300, 300, 100);
 			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball.position);
+			SDL_RenderDrawLine(renderer, 1, 1, 100, 100);
 			SDL_RenderPresent(renderer);
+
 
 			while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
 
