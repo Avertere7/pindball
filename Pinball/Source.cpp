@@ -172,7 +172,7 @@ public:
 		float ry;
 		rx = x - 2 * (x*normalna.getX()+y*normalna.getY())*normalna.getX();
 		ry = y - 2 * (x*normalna.getX() + y * normalna.getY())*normalna.getY();
-		printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
+		//printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
 		
 			x = rx;
 			y = ry;
@@ -180,6 +180,24 @@ public:
 
 	}
 	
+	void odbicieOdOkregu(int Ox, int Oy, int px, int py) {
+
+		
+		float pomx=Ox-px;
+		float pomy=Oy - py;
+		float pom = pomx + pomy;
+		pomx = pomx / abs(pom)*2;
+		pomy = pomy / abs(pom)*2;
+
+		float rx;
+		float ry;
+		rx = x - 2 * (x*pomx + y * pomy)*pomx;
+		ry = y - 2 * (x*pomx + y * pomy)*pomy;
+
+		x = rx;
+		y = ry;
+
+	}
 
 };
 
@@ -251,13 +269,13 @@ public:
 	}
 	bool wykrycieKolizji(float wspX, float wspY)
 	{
-		if(((wspX-a)*(wspX - a))+((wspY-b)*(wspX - b))-(r*r)>=0)
+		if(((wspX-a)*(wspX - a))+((wspY-b)*(wspY - b))-(r*r)<=0)
 		{
 			return true;
 		}
 		/*if (sqrt(pow(wspX - a, 2) + pow(wspY - b, 2)) >= r)
 			return true;*/
-
+		
 		return false;
 	}
 
@@ -365,8 +383,8 @@ int main(int argc, char* args[])
 		MovableObject Ball;
 		IMG_Init(IMG_INIT_PNG);
 		Ball.img = IMG_LoadTexture(renderer, "images/ball.PNG");
-		Ball.position.x = 300;
-		Ball.position.y = 300;
+		Ball.position.x = 30;
+		Ball.position.y = 30;
 		Ball.position.h = 20;
 		Ball.position.w = 20;
 		Ball.velocity.setX(0);
@@ -448,11 +466,11 @@ int main(int argc, char* args[])
 					Ball.velocity.odbicieOdProstej(*collider);
 					Ball.acceleration.odbicieOdProstej(*collider);
 
-				Ball.velocity.setY(Ball.velocity.getY()*0.5);
-				Ball.acceleration.setY(Ball.velocity.getY()*0.5);
-				Ball.velocity.setX(Ball.velocity.getX()*0.5);
-				Ball.acceleration.setX(Ball.velocity.getX()*0.5);
-				printf("kolizja \n");
+				Ball.velocity.setY(Ball.velocity.getY()*0.8);
+				Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+				Ball.velocity.setX(Ball.velocity.getX()*0.8);
+				Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
+				
 				}
 			}
 			
@@ -464,26 +482,22 @@ int main(int argc, char* args[])
 					Ball.position.x = Ball.position.x - Ball.velocity.getX();
 					Ball.position.y = Ball.position.y - Ball.velocity.getY();
 					
-					RownanieProstej pom(0,0,0,0,0,0,0);
-					pom= pierwszaO.prostopadlaWpunkcie(Ball.position.x, Ball.position.y);
-					
-
+					RownanieProstej pom = pierwszaO.prostopadlaWpunkcie(Ball.position.x, Ball.position.y);
 					Ball.velocity.odbicieOdProstej(pom);
 					Ball.acceleration.odbicieOdProstej(pom);
-
-					Ball.velocity.setY(Ball.velocity.getY()*1);
-					Ball.acceleration.setY(Ball.velocity.getY()*0);
-					Ball.velocity.setX(Ball.velocity.getX()*1);
-					Ball.acceleration.setX(Ball.velocity.getX()*0);
+					
+					Ball.velocity.setY(Ball.velocity.getY()*0.8);
+					Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+					Ball.velocity.setX(Ball.velocity.getX()*0.8);
+					Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
 					printf("kolizja \n");
-					printf("predkosc x:%f \n",Ball.velocity.getX());
-					printf("predkosc Y:%f \n", Ball.velocity.getY());
+					//printf("predkosc x:%f \n",Ball.velocity.getX());
+					//printf("predkosc Y:%f \n", Ball.velocity.getY());
 					printf("wspolrzedne x:%i \n", Ball.position.x);
 					printf("wspolrzedne y:%i \n", Ball.position.y);
 				}
-			
-		
-
+				
+	
 		//	Ball.Gravity();
 			Ball.SetVelocity();
 
