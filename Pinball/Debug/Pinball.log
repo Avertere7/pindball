@@ -27,5 +27,5 @@ c:\sdl\pindball-master\pinball\pinball\source.cpp(491): warning C4244: "argument
 c:\sdl\pindball-master\pinball\pinball\source.cpp(492): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
 c:\sdl\pindball-master\pinball\pinball\source.cpp(507): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
 c:\sdl\pindball-master\pinball\pinball\source.cpp(508): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(527): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+c:\sdl\pindball-master\pinball\pinball\source.cpp(528): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
   Pinball.vcxproj -> C:\SDL\pindball-master\Pinball\Pinball\Debug\Pinball.exe

@@ -516,12 +516,13 @@ int main(int argc, char* args[])
 			SDL_QueryTexture(Ball.img, NULL, NULL, &Ball.position.w,&Ball.position.h);
 			SDL_QueryTexture(table, NULL, NULL, &w,&h);
 
-			SDL_RenderClear(renderer);
-			SDL_RenderCopy(renderer, table, NULL, &texr);
-			DrawCircle(renderer, 300, 300, 100);
-			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball.position);
-			SDL_RenderDrawLine(renderer, 1, 1, 100, 100);
-			SDL_RenderPresent(renderer);
+			SDL_RenderClear(renderer);// wyczyszczenie rendera
+			SDL_RenderCopy(renderer, table, NULL, &texr);//rysowanie tla
+			DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
+			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball.position);// rysowanie pilki
+			SDL_RenderDrawLine(renderer, 1, 1, 100, 100);// rysowanie lini
+			
+			SDL_RenderPresent(renderer);// wyswietlenie
 
 
 			while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
