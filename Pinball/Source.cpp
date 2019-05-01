@@ -6,11 +6,14 @@ and may not be redistributed without written permission.*/
 #include <stdio.h>
 #include <SDL_image.h>
 #include <cmath>
-#include <string>
 #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <math.h>
+#include <SDL_ttf.h>
+#include <Windows.h>
+#include <sstream>
+#include <string>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 800;
@@ -387,6 +390,7 @@ bool init()
 			gScreenSurface = SDL_GetWindowSurface(Window);
 		}
 	}
+	TTF_Init();
 	return success;
 }
 
@@ -415,11 +419,12 @@ void close()
 	//Destroy window
 	SDL_DestroyWindow(Window);
 	Window = NULL;
-
-
+	
+	TTF_Quit();
 	IMG_Quit();
 	//Quit SDL subsystems
 	SDL_Quit();
+
 }
 
 
@@ -455,6 +460,8 @@ int main(int argc, char* args[])
 		Ball.velocity.setX(0);
 		Ball.velocity.setY(0);
 		Ball.setKolaider();
+
+		
 
 		std::vector<RownanieProstej*> kolaidery;
 		kolaidery.reserve(99);
@@ -493,6 +500,8 @@ int main(int argc, char* args[])
 		SDL_Event e;
 		int FPS = 60;
 		int FrameStartTimeMs = 0;
+		int widthText = 0;
+		int heightText = 0;
 
 		while (!quit)
 		{
@@ -635,19 +644,39 @@ int main(int argc, char* args[])
 			//SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball._position);
 			SDL_QueryTexture(Ball.img, NULL, NULL, &Ball._position.w,&Ball._position.h);
 			SDL_QueryTexture(table, NULL, NULL, &w,&h);
+			//text
+			SDL_Color color = { 0,0,0 };
+			TTF_Font * font = TTF_OpenFont("arial.ttf", 25);
+			std::stringstream tekst,tekst2;
+			int time = SDL_GetTicks() / 100;
+			tekst << "Czas:" << time;
+			tekst2 << "Punkty:0";
+			SDL_Surface * surface = TTF_RenderText_Solid(font,tekst.str().c_str() , color);
+			SDL_Surface * surface2 = TTF_RenderText_Solid(font,tekst2.str().c_str() , color);
+			SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+			SDL_Texture * texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
+			SDL_QueryTexture(texture, NULL, NULL, &widthText, &heightText);
+			SDL_QueryTexture(texture2, NULL, NULL, &widthText, &heightText);
+			SDL_Rect positionText = { 700,0,widthText,heightText };
+			SDL_Rect positionText2 = { 700,30,widthText,heightText };
 
 			SDL_RenderClear(renderer);// wyczyszczenie rendera
 			SDL_RenderCopy(renderer, table, NULL, &texr);//rysowanie tla
 			DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
 			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball._position);// rysowanie pilki
+
+			SDL_RenderCopy(renderer, texture, NULL, &positionText);
+			SDL_RenderCopy(renderer, texture2, NULL, &positionText2);
 			SDL_RenderDrawLine(renderer, lewa.xMin, lewa.yMin, lewa.xMax, lewa.yMax);// lewa
 			SDL_RenderDrawLine(renderer, prawa.xMin, prawa.yMax, prawa.xMax, prawa.yMin);// lewa
 			//SDL_RenderDrawLine(renderer, 355, 500, 495, 450);// prawa
-			
 			SDL_RenderPresent(renderer);// wyswietlenie
 
 			while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
-
+		
+			SDL_DestroyTexture(texture);
+			SDL_FreeSurface(surface);
+			TTF_CloseFont(font);
 		}
 
 

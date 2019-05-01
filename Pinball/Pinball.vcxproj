@@ -76,13 +76,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SDL\SDL2_image\include;C:\SDL\SDL2\include;C:\SDL\Pinball\veclib;C:\SDL\SDL2_image\include;C:\SDL\pindball-master\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SDL\SDL2_image\include;C:\SDL\SDL2\include;C:\SDL\SDL2_ttf-2.0.15\include;C:\SDL\Pinball\veclib;C:\SDL\SDL2_image\include;C:\SDL\pindball-master\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\SDL\SDL2_image\lib\x86;C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image\lib\x86;C:\SDL\SDL2\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\SDL\SDL2_image\lib\x86;C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image\lib\x86;C:\SDL\SDL2\lib\x86;%(AdditionalLibraryDirectories);C:\SDL\SDL2_ttf-2.0.15\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -92,11 +92,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SDL\SDL2_image\include;C:\SDL\SDL2\include;C:\Users\Avertere\Desktop\pindball-master\Pinball\veclib;C:\Users\Avertere\Desktop\pindball-master\SDL2_image\include;C:\Users\Avertere\Desktop\pindball-master\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SDL\SDL2_image\include;C:\SDL\SDL2\include;C:\SDL\SDL2_ttf-2.0.15\include;C:\Users\Avertere\Desktop\pindball-master\Pinball\veclib;C:\Users\Avertere\Desktop\pindball-master\SDL2_image\include;C:\Users\Avertere\Desktop\pindball-master\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\SDL\SDL2_image\lib\x86;C:\SDL\SDL2\lib\x86;C:\Users\Avertere\Desktop\pindball-master\SDL2_image\lib\x86;C:\Users\Avertere\Desktop\pindball-master\SDL2\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\SDL\SDL2_image\lib\x86;C:\SDL\SDL2\lib\x86;C:\Users\Avertere\Desktop\pindball-master\SDL2_image\lib\x86;C:\Users\Avertere\Desktop\pindball-master\SDL2\lib\x86;%(AdditionalLibraryDirectories);C:\SDL\SDL2_ttf-2.0.15\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
