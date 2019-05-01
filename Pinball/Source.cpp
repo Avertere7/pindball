@@ -15,7 +15,7 @@ and may not be redistributed without written permission.*/
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const int maxspeed = 100;
-
+int w, h;
 //Starts up SDL and creates window
 bool init();
 
@@ -26,6 +26,45 @@ bool loadMedia();
 void close();
 
 // test
+
+void DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centreY, int32_t radius)
+{
+	const int32_t diameter = (radius * 2);
+
+	int32_t x = (radius - 1);
+	int32_t y = 0;
+	int32_t tx = 1;
+	int32_t ty = 1;
+	int32_t error = (tx - diameter);
+
+	while (x >= y)
+	{
+		//  Each of the following renders an octant of the circle
+		SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
+		SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
+		SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
+		SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
+		SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
+		SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
+		SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
+		SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
+
+		if (error <= 0)
+		{
+			++y;
+			error += ty;
+			ty += 2;
+		}
+
+		if (error > 0)
+		{
+			--x;
+			tx += 2;
+			error += (tx - diameter);
+		}
+	}
+}
+
 
 struct position {
 	float x;
@@ -133,11 +172,30 @@ public:
 		float ry;
 		rx = x - 2 * (x*normalna.getX()+y*normalna.getY())*normalna.getX();
 		ry = y - 2 * (x*normalna.getX() + y * normalna.getY())*normalna.getY();
-		printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
+		//printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
 		
 			x = rx;
 			y = ry;
 		
+
+	}
+	
+	void odbicieOdOkregu(int Ox, int Oy, int px, int py) {
+
+		
+		float pomx=Ox-px;
+		float pomy=Oy - py;
+		float pom = pomx + pomy;
+		pomx = pomx / abs(pom)*2;
+		pomy = pomy / abs(pom)*2;
+
+		float rx;
+		float ry;
+		rx = x - 2 * (x*pomx + y * pomy)*pomx;
+		ry = y - 2 * (x*pomx + y * pomy)*pomy;
+
+		x = rx;
+		y = ry;
 
 	}
 
@@ -148,7 +206,7 @@ public:
 	vector2d velocity;
 	vector2d acceleration;
 	SDL_Rect position;
-	SDL_Surface* image = NULL;
+	SDL_Texture *img = NULL;
 	const float gravity = 0.5;
 	const float dt = 1 / 30.0; // przyrost czasu
 	MovableObject();
@@ -211,13 +269,13 @@ public:
 	}
 	bool wykrycieKolizji(float wspX, float wspY)
 	{
-		if(((wspX-a)*(wspX - a))+((wspY-b)*(wspX - b))-(r*r)>=0)
+		if(((wspX-a)*(wspX - a))+((wspY-b)*(wspY - b))-(r*r)<=0)
 		{
 			return true;
 		}
 		/*if (sqrt(pow(wspX - a, 2) + pow(wspY - b, 2)) >= r)
 			return true;*/
-
+		
 		return false;
 	}
 
@@ -232,9 +290,11 @@ SDL_Window* Window = NULL;
 //The surface contained by the window
 SDL_Surface* gScreenSurface = NULL;
 
+SDL_Renderer *renderer = NULL;
+
+
 //The image we will load and show on the screen
-SDL_Surface* ball = NULL;
-SDL_Surface* table = NULL;
+SDL_Texture* table = NULL;
 
 bool init()
 {
@@ -250,7 +310,8 @@ bool init()
 	else
 	{
 		//Create window
-		Window = SDL_CreateWindow("Pinball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		Window = SDL_CreateWindow("Pinball", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+		renderer = SDL_CreateRenderer(Window, -1, SDL_RENDERER_ACCELERATED);
 		if (Window == NULL)
 		{
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -272,7 +333,7 @@ bool loadMedia()
 
 
 	//Load splash image
-	table = SDL_LoadBMP("images/table.bmp");
+	table = IMG_LoadTexture(renderer,"images/table.bmp");
 	if (table == NULL)
 	{
 		printf("Unable to load image %s! SDL Error: %s\n", "02_getting_an_image_on_the_screen/hello_world.bmp", SDL_GetError());
@@ -285,10 +346,7 @@ bool loadMedia()
 void close()
 {
 	//Deallocate surface
-	SDL_FreeSurface(table);
-	table = NULL;
-	SDL_FreeSurface(ball);
-	ball = NULL;
+	
 
 	//Destroy window
 	SDL_DestroyWindow(Window);
@@ -324,20 +382,20 @@ int main(int argc, char* args[])
 
 		MovableObject Ball;
 		IMG_Init(IMG_INIT_PNG);
-		Ball.image = IMG_Load("images/ball.PNG");
-		Ball.position.x = 300;
-		Ball.position.y = 300;
-		Ball.position.h = Ball.image->h;
-		Ball.position.w = Ball.image->w;
+		Ball.img = IMG_LoadTexture(renderer, "images/ball.PNG");
+		Ball.position.x = 30;
+		Ball.position.y = 30;
+		Ball.position.h = 20;
+		Ball.position.w = 20;
 		Ball.velocity.setX(0);
 		Ball.velocity.setY(0);
 
 		std::vector<RownanieProstej*> kolaidery;
 		kolaidery.reserve(99);
-		RownanieProstej pierwsza(1, 0, -700, -5, 800, -5, 800,true);
-		RownanieProstej druga(1, 0, 0, -5, 800, -5, 800);
-		RownanieProstej trzecia(0, 1, 0, -5, 800, -5, 800);
-		RownanieProstej czwarta(0, 1, -500, -5, 800, -5, 800,true);
+		RownanieProstej pierwsza(1, 0, -700, -20, 800, -20, 800,true);
+		RownanieProstej druga(1, 0, 0, -20, 800, -20, 800);
+		RownanieProstej trzecia(0, 1, 0, -20, 800, -20, 800);
+		RownanieProstej czwarta(0, 1, -500, -20, 800, -20, 800,true);
 		kolaidery.push_back(&pierwsza);
 		kolaidery.push_back(&druga);
 		kolaidery.push_back(&trzecia);
@@ -346,17 +404,19 @@ int main(int argc, char* args[])
 		
 		std::vector<RownanieOkregu*> kolaideryO;
 		kolaideryO.reserve(99);
-		RownanieOkregu pierwszaO(300, 300,50,0,800,0,600);
+		RownanieOkregu pierwszaO(300, 300,100,0,800,0,600);
 
 		kolaideryO.push_back(&pierwszaO);
 		
 
 		//Apply the image
 		//SDL_BlitSurface(gHelloWorld, NULL, gScreenSurface, NULL);
-		SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
-		SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
+		//SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
+		//SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
 		//Update the surface
-		SDL_UpdateWindowSurface(Window);
+		
+		
+		//SDL_UpdateWindowSurface(Window);
 
 		//Wait two seconds
 		bool quit = false;
@@ -406,11 +466,11 @@ int main(int argc, char* args[])
 					Ball.velocity.odbicieOdProstej(*collider);
 					Ball.acceleration.odbicieOdProstej(*collider);
 
-				Ball.velocity.setY(Ball.velocity.getY()*0.5);
-				Ball.acceleration.setY(Ball.velocity.getY()*0.5);
-				Ball.velocity.setX(Ball.velocity.getX()*0.5);
-				Ball.acceleration.setX(Ball.velocity.getX()*0.5);
-				//printf("kolizja \n");
+				Ball.velocity.setY(Ball.velocity.getY()*0.8);
+				Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+				Ball.velocity.setX(Ball.velocity.getX()*0.8);
+				Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
+				
 				}
 			}
 			
@@ -422,26 +482,22 @@ int main(int argc, char* args[])
 					Ball.position.x = Ball.position.x - Ball.velocity.getX();
 					Ball.position.y = Ball.position.y - Ball.velocity.getY();
 					
-					RownanieProstej pom(0,0,0,0,0,0,0);
-					pom= pierwszaO.prostopadlaWpunkcie(Ball.position.x, Ball.position.y);
-					
-
+					RownanieProstej pom = pierwszaO.prostopadlaWpunkcie(Ball.position.x, Ball.position.y);
 					Ball.velocity.odbicieOdProstej(pom);
 					Ball.acceleration.odbicieOdProstej(pom);
-
-					Ball.velocity.setY(Ball.velocity.getY()*0.5);
-					Ball.acceleration.setY(Ball.velocity.getY()*0.5);
-					Ball.velocity.setX(Ball.velocity.getX()*0.5);
-					Ball.acceleration.setX(Ball.velocity.getX()*0.5);
+					
+					Ball.velocity.setY(Ball.velocity.getY()*0.8);
+					Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+					Ball.velocity.setX(Ball.velocity.getX()*0.8);
+					Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
 					printf("kolizja \n");
-					printf("predkosc x:%f \n",Ball.velocity.getX());
-					printf("predkosc Y:%f \n", Ball.velocity.getY());
-					printf("wspolrzedne x:%f \n", Ball.position.x);
-					printf("wspolrzedne y:%f \n", Ball.position.y);
+					//printf("predkosc x:%f \n",Ball.velocity.getX());
+					//printf("predkosc Y:%f \n", Ball.velocity.getY());
+					printf("wspolrzedne x:%i \n", Ball.position.x);
+					printf("wspolrzedne y:%i \n", Ball.position.y);
 				}
-			
-		
-
+				
+	
 		//	Ball.Gravity();
 			Ball.SetVelocity();
 
@@ -454,12 +510,21 @@ int main(int argc, char* args[])
 			//printf("predkosc x: \n %f\n", Ball.acceleration.getX());
 
 
+			SDL_Rect texr; texr.x = 0; texr.y = 0; texr.w = w * 2; texr.h = h * 2;
+		//	SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
+			//SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
+			SDL_QueryTexture(Ball.img, NULL, NULL, &Ball.position.w,&Ball.position.h);
+			SDL_QueryTexture(table, NULL, NULL, &w,&h);
 
-			SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
-			SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
+			SDL_RenderClear(renderer);// wyczyszczenie rendera
+			SDL_RenderCopy(renderer, table, NULL, &texr);//rysowanie tla
+			DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
+			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball.position);// rysowanie pilki
+			SDL_RenderDrawLine(renderer, 1, 1, 100, 100);// rysowanie lini
+			
+			SDL_RenderPresent(renderer);// wyswietlenie
 
 
-			SDL_UpdateWindowSurface(Window);
 			while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
 
 		}
