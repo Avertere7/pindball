@@ -362,6 +362,7 @@ SDL_Renderer *renderer = NULL;
 
 //The image we will load and show on the screen
 SDL_Texture* table = NULL;
+SDL_Texture* sprezyna = NULL;
 
 bool init()
 {
@@ -404,9 +405,16 @@ bool loadMedia()
 	table = IMG_LoadTexture(renderer,"images/table.bmp");
 	if (table == NULL)
 	{
-		printf("Unable to load image %s! SDL Error: %s\n", "02_getting_an_image_on_the_screen/hello_world.bmp", SDL_GetError());
+		printf("Unable to load image %s! SDL Error: %s\n", "images/table.bmp", SDL_GetError());
 		success = false;
 	}
+	sprezyna = IMG_LoadTexture(renderer, "images/sprezyna1.png");
+	if (sprezyna == NULL)
+	{
+		printf("Unable to load image %s! SDL Error: %s\n", "images/sprezyna1.png", SDL_GetError());
+		success = false;
+	}
+
 
 	return success;
 }
@@ -415,7 +423,6 @@ void close()
 {
 	//Deallocate surface
 	
-
 	//Destroy window
 	SDL_DestroyWindow(Window);
 	Window = NULL;
@@ -453,30 +460,43 @@ int main(int argc, char* args[])
 		MovableObject Ball;
 		IMG_Init(IMG_INIT_PNG);
 		Ball.img = IMG_LoadTexture(renderer, "images/ball.PNG");
-		Ball._position.x = 30;
-		Ball._position.y = 30;
+		Ball._position.x = 583;
+		Ball._position.y = 469;
+		/*Ball._position.x = 30;
+		Ball._position.y = 50;*/
 		Ball._position.h = 20;
 		Ball._position.w = 20;
 		Ball.velocity.setX(0);
 		Ball.velocity.setY(0);
 		Ball.setKolaider();
 
-		
 
 		std::vector<RownanieProstej*> kolaidery;
 		kolaidery.reserve(99);
-		RownanieProstej pierwsza(1, 0, -700, -20, 800, -20, 800,true);
-		RownanieProstej druga(1, 0, 0, -20, 800, -20, 800);
-		RownanieProstej trzecia(0, 1, 0, -20, 800, -20, 800);
-		RownanieProstej czwarta(0, 1, -500, -20, 800, -20, 800,true);
-		RownanieProstej lewa(0.357142, -1, 382.1428, 190, 330, 450, 500);
-		RownanieProstej prawa(-0.357142, -1, 626.7857, 355, 495,  450, 500);
-		kolaidery.push_back(&pierwsza);
-		kolaidery.push_back(&druga);
-		kolaidery.push_back(&trzecia);
-		kolaidery.push_back(&czwarta);
-		kolaidery.push_back(&lewa);
-		kolaidery.push_back(&prawa);
+
+		//RownanieProstej prawaKrawedz(1, 0, -569, -20, 800, -20, 800,true); prawy kolaider zastapiony dwmoa ponizej 
+		RownanieProstej prawaKrawedzG(1, 0, -579, -20, 800, 0,30, true);
+		RownanieProstej prawaKrawedzD(1, 0, -579,-20,800,67,600,true);
+		RownanieProstej lewaKrawedz(1, 0, 0, -20, 800, -20, 800);
+		RownanieProstej gornaKrawedz(0, 1, 0, -20, 800, -20, 800);
+		//RownanieProstej dolnaKrawedz(0, 1, -500, -20, 800, -20, 800,true);//usunalem dolna bo nie jest potrzebna
+		RownanieProstej lramie(0.357142, -1, 382.1428, 190, 330, 450, 500);
+		RownanieProstej pramie(-0.357142, -1, 626.7857, 355, 495,  450, 500);
+		RownanieProstej prawaKrawedzRura(1, 0, -603, -20, 800, 60, 600, true);
+		RownanieProstej dolnaKrawedzRury(0, 1, -489, 579, 603, -20, 800, true);
+		RownanieProstej skosRury(1.25, 0, -693.75, 579, 603, 30, 60,true);
+
+
+		//kolaidery.push_back(&prawaKrawedzD);
+		//kolaidery.push_back(&prawaKrawedzG); usunalem dodanie prawej krawedzi, bo myslalem ze jakos sie buguje-bo kolider z pilki jest po lewej stronie ale to nic nie dalo
+		kolaidery.push_back(&lewaKrawedz);
+		kolaidery.push_back(&gornaKrawedz);
+		//kolaidery.push_back(&dolnaKrawedz);
+		kolaidery.push_back(&lramie);
+		kolaidery.push_back(&pramie);
+		kolaidery.push_back(&prawaKrawedzRura);
+		kolaidery.push_back(&skosRury);
+
 		//kolaidery.push_back(RownanieProstej(1,2,3,4,5,6,7));
 		
 		std::vector<RownanieOkregu*> kolaideryO;
@@ -502,6 +522,8 @@ int main(int argc, char* args[])
 		int FrameStartTimeMs = 0;
 		int widthText = 0;
 		int heightText = 0;
+		int widthText2 = 24;
+		int heightText2 = 60;
 
 		while (!quit)
 		{
@@ -521,22 +543,24 @@ int main(int argc, char* args[])
 					if (e.key.keysym.sym == SDLK_z)
 					{
 
-						DrawNewLine(&lewa, 2);
-						lewa.rusza = true;
+						DrawNewLine(&lramie, 2);
+						lramie.rusza = true;
 					}
 					if (e.key.keysym.sym == SDLK_x)
 					{
-						DrawNewLine(&prawa, 2);
-						prawa.rusza = true;
+						DrawNewLine(&pramie, 2);
+						pramie.rusza = true;
 					}
+					if (e.key.keysym.sym == SDLK_SPACE)
+						Ball.velocity.setY(-10);
 				}
 				
 				if (e.type == SDL_KEYUP)
 				{
 					if (e.key.keysym.sym == SDLK_z)
-						lewa.rusza = false;
+						lramie.rusza = false;
 					if (e.key.keysym.sym == SDLK_x)
-						prawa.rusza = false;
+						pramie.rusza = false;
 				}
 
 
@@ -548,7 +572,8 @@ int main(int argc, char* args[])
 				}
 			}
 
-			//Ball.setKolaider();
+			//Ball.setKolaider(); co do kolizji to zauwazylem ze np jak nacisne z to program czyta 2 uderzenia, jakby w ciagu jednej klatki 2 razy program byl wykonywany moze to miec tez zwiazek z tymi kolaiderami
+			//ze 2 razy sie odbija i gdy mamy te 8 punktów to nie do konca to dzia³a. Mo¿e trzeba cos zmieniæ w klatkach / sekunde
 
 			//[&] {
 			//	for (auto &collider : kolaidery)
@@ -560,7 +585,7 @@ int main(int argc, char* args[])
 			//				printf("wykrycie kolizji na punkcie x:%f i y:%f \n", ballK.x-Ball._position.x, ballK.y-Ball._position.y);
 			//				Ball._position.x = ballK.x - Ball.velocity.getX();//  // Ball._position.x- Ball.velocity.getX();//
 			//				Ball._position.y = ballK.y - Ball.velocity.getY();// //Ball._position.y - Ball.velocity.getY();// 
-			//				/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lewa) { return 1 }
+			//				/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lramie) { return 1 }
 			//				else { return-1 });*/
 			//				Ball.velocity.odbicieOdProstej(*collider);
 			//				Ball.acceleration.odbicieOdProstej(*collider);
@@ -578,10 +603,10 @@ int main(int argc, char* args[])
 			//}();
 			//printf("Wyjscie \n");
 
-			if (!lewa.rusza)
-				DrawNewLine(&lewa, -2);
-			if (!prawa.rusza)
-				DrawNewLine(&prawa, -2);
+			if (!lramie.rusza)
+				DrawNewLine(&lramie, -2);
+			if (!pramie.rusza)
+				DrawNewLine(&pramie, -2);
 
 			for (auto &collider : kolaidery)
 			{
@@ -589,7 +614,7 @@ int main(int argc, char* args[])
 				{
 					Ball._position.x = Ball._position.x - Ball.velocity.getX();
 					Ball._position.y = Ball._position.y - Ball.velocity.getY();
-					/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lewa) { return 1 }
+					/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lramie) { return 1 }
 					else { return-1 });*/
 					Ball.velocity.odbicieOdProstej(*collider);
 					Ball.acceleration.odbicieOdProstej(*collider);
@@ -646,19 +671,23 @@ int main(int argc, char* args[])
 			SDL_QueryTexture(table, NULL, NULL, &w,&h);
 			//text
 			SDL_Color color = { 0,0,0 };
-			TTF_Font * font = TTF_OpenFont("arial.ttf", 25);
-			std::stringstream tekst,tekst2;
+			TTF_Font * font = TTF_OpenFont("arial.ttf", 25);//czcionka
+			std::stringstream tekst,tekst2;//tekst
+
 			int time = SDL_GetTicks() / 100;
 			tekst << "Czas:" << time;
 			tekst2 << "Punkty:0";
+
 			SDL_Surface * surface = TTF_RenderText_Solid(font,tekst.str().c_str() , color);
 			SDL_Surface * surface2 = TTF_RenderText_Solid(font,tekst2.str().c_str() , color);
 			SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
 			SDL_Texture * texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
 			SDL_QueryTexture(texture, NULL, NULL, &widthText, &heightText);
 			SDL_QueryTexture(texture2, NULL, NULL, &widthText, &heightText);
+		//	SDL_QueryTexture(texture_sprezyna, NULL, NULL, &widthText2, &heightText2);
 			SDL_Rect positionText = { 700,0,widthText,heightText };
 			SDL_Rect positionText2 = { 700,30,widthText,heightText };
+			//SDL_Rect positionSprezyna = { 0,0,0,0 };
 
 			SDL_RenderClear(renderer);// wyczyszczenie rendera
 			SDL_RenderCopy(renderer, table, NULL, &texr);//rysowanie tla
@@ -667,13 +696,22 @@ int main(int argc, char* args[])
 
 			SDL_RenderCopy(renderer, texture, NULL, &positionText);
 			SDL_RenderCopy(renderer, texture2, NULL, &positionText2);
-			SDL_RenderDrawLine(renderer, lewa.xMin, lewa.yMin, lewa.xMax, lewa.yMax);// lewa
-			SDL_RenderDrawLine(renderer, prawa.xMin, prawa.yMax, prawa.xMax, prawa.yMin);// lewa
-			//SDL_RenderDrawLine(renderer, 355, 500, 495, 450);// prawa
+			SDL_RenderCopy(renderer, sprezyna, NULL, &texr); //nie moglem wyswietlic sprezyny nvm dlaczego
+
+			SDL_RenderDrawLine(renderer, lramie.xMin, lramie.yMin, lramie.xMax, lramie.yMax);// lramie
+			SDL_RenderDrawLine(renderer, pramie.xMin, pramie.yMax, pramie.xMax, pramie.yMin);// pramie
+			SDL_RenderDrawLine(renderer,579, 0, 579, 30);// pGkrawedz
+			SDL_RenderDrawLine(renderer, 579, 67, 579, 600);// pDkrawedz
+			SDL_RenderDrawLine(renderer, 603, 60, 603, 600);// pkrawedzRura
+			SDL_RenderDrawLine(renderer, 579, 489, 603, 489);// dkrawedzRura
+			SDL_RenderDrawLine(renderer, 579, 30, 603, 60);// skosRura	
+
+			//SDL_RenderDrawLine(renderer, 355, 500, 495, 450);// pramie
 			SDL_RenderPresent(renderer);// wyswietlenie
 
 			while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
-		
+
+			SDL_DestroyTexture(sprezyna);
 			SDL_DestroyTexture(texture);
 			SDL_FreeSurface(surface);
 			TTF_CloseFont(font);
