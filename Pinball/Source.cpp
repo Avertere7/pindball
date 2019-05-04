@@ -478,8 +478,8 @@ int main(int argc, char* args[])
 		AnimatedObject sprezyna;
 		IMG_Init(IMG_INIT_PNG);
 		sprezyna.img= IMG_LoadTexture(renderer, "images/sprezyna1.PNG");
-		sprezyna._position.x = 120;
-		sprezyna._position.y = 469;
+		sprezyna._position.x = 580;
+		sprezyna._position.y = 490;
 		sprezyna._position.h = 60;
 		sprezyna._position.w = 24;
 
@@ -535,8 +535,8 @@ int main(int argc, char* args[])
 		int FrameStartTimeMs = 0;
 		int widthText = 0;
 		int heightText = 0;
-		int widthText2 = 24;
-		int heightText2 = 60;
+		int widthText2 = 0;
+		int heightText2 = 0;
 
 		while (!quit)
 		{
@@ -565,7 +565,12 @@ int main(int argc, char* args[])
 						pramie.rusza = true;
 					}
 					if (e.key.keysym.sym == SDLK_SPACE)
-						Ball.velocity.setY(-10);
+					{
+						if (Ball._position.x == 583 && Ball._position.y == 469)
+							Ball.velocity.setY(-10);
+
+					}
+					
 				}
 				
 				if (e.type == SDL_KEYUP)
@@ -684,22 +689,29 @@ int main(int argc, char* args[])
 			SDL_QueryTexture(table, NULL, NULL, &w,&h);
 			//text
 			SDL_Color color = { 0,0,0 };
+
 			TTF_Font * font = TTF_OpenFont("arial.ttf", 25);//czcionka
-			std::stringstream tekst,tekst2;//tekst
+			std::stringstream tekst,tekst2,tekst3,tekst4;//tekst
 
 			int time = SDL_GetTicks() / 100;
 			tekst << "Czas:" << time;
 			tekst2 << "Punkty:0";
+			tekst3 << "Zacznij gre";
+			tekst4 << "spacja";
 
 			SDL_Surface * surface = TTF_RenderText_Solid(font,tekst.str().c_str() , color);
 			SDL_Surface * surface2 = TTF_RenderText_Solid(font,tekst2.str().c_str() , color);
+			SDL_Surface * surface3 = TTF_RenderText_Solid(font,tekst3.str().c_str() , color);
 			SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
 			SDL_Texture * texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
+			SDL_Texture * texture3 = SDL_CreateTextureFromSurface(renderer, surface3);
 			SDL_QueryTexture(texture, NULL, NULL, &widthText, &heightText);
 			SDL_QueryTexture(texture2, NULL, NULL, &widthText, &heightText);
+			SDL_QueryTexture(texture3, NULL, NULL, &widthText, &heightText);
 		//	SDL_QueryTexture(texture_sprezyna, NULL, NULL, &widthText2, &heightText2);
-			SDL_Rect positionText = { 700,0,widthText,heightText };
-			SDL_Rect positionText2 = { 700,30,widthText,heightText };
+			SDL_Rect positionText = { 700,0,100,heightText };
+			SDL_Rect positionText2 = { 700,30,100,heightText };
+			SDL_Rect positionText3 = { 600,60,widthText,heightText };
 			//SDL_Rect positionSprezyna = { 0,0,0,0 };
 
 			SDL_RenderClear(renderer);// wyczyszczenie rendera
@@ -710,6 +722,7 @@ int main(int argc, char* args[])
 
 			SDL_RenderCopy(renderer, texture, NULL, &positionText);
 			SDL_RenderCopy(renderer, texture2, NULL, &positionText2);
+			SDL_RenderCopy(renderer, texture3, NULL, &positionText3);
 
 			
 
