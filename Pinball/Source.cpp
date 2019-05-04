@@ -217,6 +217,13 @@ public:
 
 };
 
+class AnimatedObject {
+public:
+	SDL_Rect _position;
+	SDL_Texture *img = NULL;
+};
+
+
 class MovableObject {
 public:
 	vector2d velocity;
@@ -362,7 +369,6 @@ SDL_Renderer *renderer = NULL;
 
 //The image we will load and show on the screen
 SDL_Texture* table = NULL;
-SDL_Texture* sprezyna = NULL;
 
 bool init()
 {
@@ -408,12 +414,7 @@ bool loadMedia()
 		printf("Unable to load image %s! SDL Error: %s\n", "images/table.bmp", SDL_GetError());
 		success = false;
 	}
-	sprezyna = IMG_LoadTexture(renderer, "images/sprezyna1.png");
-	if (sprezyna == NULL)
-	{
-		printf("Unable to load image %s! SDL Error: %s\n", "images/sprezyna1.png", SDL_GetError());
-		success = false;
-	}
+
 
 
 	return success;
@@ -469,6 +470,18 @@ int main(int argc, char* args[])
 		Ball.velocity.setX(0);
 		Ball.velocity.setY(0);
 		Ball.setKolaider();
+
+		
+
+
+
+		AnimatedObject sprezyna;
+		IMG_Init(IMG_INIT_PNG);
+		sprezyna.img= IMG_LoadTexture(renderer, "images/sprezyna1.PNG");
+		sprezyna._position.x = 120;
+		sprezyna._position.y = 469;
+		sprezyna._position.h = 60;
+		sprezyna._position.w = 24;
 
 
 		std::vector<RownanieProstej*> kolaidery;
@@ -693,10 +706,12 @@ int main(int argc, char* args[])
 			SDL_RenderCopy(renderer, table, NULL, &texr);//rysowanie tla
 			DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
 			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball._position);// rysowanie pilki
+			SDL_RenderCopy(renderer, sprezyna.img, NULL, &sprezyna._position);
 
 			SDL_RenderCopy(renderer, texture, NULL, &positionText);
 			SDL_RenderCopy(renderer, texture2, NULL, &positionText2);
-			SDL_RenderCopy(renderer, sprezyna, NULL, &texr); //nie moglem wyswietlic sprezyny nvm dlaczego
+
+			
 
 			SDL_RenderDrawLine(renderer, lramie.xMin, lramie.yMin, lramie.xMax, lramie.yMax);// lramie
 			SDL_RenderDrawLine(renderer, pramie.xMin, pramie.yMax, pramie.xMax, pramie.yMin);// pramie
@@ -711,7 +726,7 @@ int main(int argc, char* args[])
 
 			while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
 
-			SDL_DestroyTexture(sprezyna);
+			//SDL_DestroyTexture(sprezyna.img);
 			SDL_DestroyTexture(texture);
 			SDL_FreeSurface(surface);
 			TTF_CloseFont(font);
