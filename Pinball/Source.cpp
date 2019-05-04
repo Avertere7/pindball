@@ -368,6 +368,7 @@ SDL_Renderer *renderer = NULL;
 
 //The image we will load and show on the screen
 SDL_Texture* table = NULL;
+int counterAnimation = 0;
 
 bool init()
 {
@@ -486,7 +487,7 @@ int main(int argc, char* args[])
 		std::vector<RownanieProstej*> kolaidery;
 		kolaidery.reserve(99);
 
-		//RownanieProstej prawaKrawedz(1, 0, -569, -20, 800, -20, 800,true); prawy kolaider zastapiony dwmoa ponizej 
+		//RownanieProstej prawaKrawedz(1, 0, -569, -20, 800, -20, 800,true); //prawy kolaider zastapiony dwmoa ponizej 
 		RownanieProstej prawaKrawedzG(1, 0, -579, -20, 800, 0,30, true);
 		RownanieProstej prawaKrawedzD(1, 0, -579,-20,583,67,600,true);
 		RownanieProstej lewaKrawedz(1, 0, 0, -20, 800, -20, 800);
@@ -499,7 +500,6 @@ int main(int argc, char* args[])
 		RownanieProstej skosRury(2.3333333333333335, -1, -1348.3333333333335, 579, 603, 30, 60);
 
 
-		kolaidery.push_back(&prawaKrawedzD);
 		kolaidery.push_back(&prawaKrawedzG); 
 		kolaidery.push_back(&lewaKrawedz);
 		kolaidery.push_back(&gornaKrawedz);
@@ -566,7 +566,9 @@ int main(int argc, char* args[])
 					if (e.key.keysym.sym == SDLK_SPACE)
 					{
 						if (Ball._position.x == 583 && Ball._position.y == 469)
-							Ball.velocity.setY(-10);
+						{
+							counterAnimation++;
+						}
 
 					}
 					
@@ -578,6 +580,14 @@ int main(int argc, char* args[])
 						lramie.rusza = false;
 					if (e.key.keysym.sym == SDLK_x)
 						pramie.rusza = false;
+					if (e.key.keysym.sym == SDLK_SPACE)
+					{
+						if (Ball._position.x == 583 && Ball._position.y == 469)
+						{
+							Ball.velocity.setY(-10);
+							counterAnimation = 0;
+						}
+					}
 				}
 
 
@@ -619,6 +629,11 @@ int main(int argc, char* args[])
 			//	}
 			//}();
 			//printf("Wyjscie \n");
+			if (Ball._position.x < 500)
+			{
+				kolaidery.erase(kolaidery.begin() + 6);
+				kolaidery.push_back(&prawaKrawedzD);
+			}
 
 			if (!lramie.rusza)
 				DrawNewLine(&lramie, -2);
@@ -649,8 +664,8 @@ int main(int argc, char* args[])
 				}
 			}
 
-			printf("kolajder x: \n %f\n", Ball.kolidery[0].x);
-			printf("kolajder y: \n %f\n", Ball.kolidery[0].y);
+		/*	printf("kolajder x: \n %f\n", Ball.kolidery[0].x);
+			printf("kolajder y: \n %f\n", Ball.kolidery[0].y);*/
 				//if (pierwszaO.wykrycieKolizji(Ball._position.x, Ball._position.y))
 				//{
 				//	printf("predkosc x:%f \n", Ball.velocity.getX());
@@ -695,40 +710,67 @@ int main(int argc, char* args[])
 			SDL_QueryTexture(table, NULL, NULL, &w,&h);
 			//text
 			SDL_Color color = { 0,0,0 };
-
+			SDL_Color colorW = { 0,0,0 };
+			SDL_Color colorR = { 255,0,0 };
+			SDL_Color colorG = { 0,255,0 };
+			SDL_Color colorB = { 0,0,255 };
 			TTF_Font * font = TTF_OpenFont("arial.ttf", 25);//czcionka
-			std::stringstream tekst,tekst2,tekst3,tekst4;//tekst
+			std::stringstream tekst, tekst2, tekst3, tekst4;//tekst
 
 			int time = SDL_GetTicks() / 100;
+			if (time % 7 == 0)
+				color = colorR;
+			else if (time % 3== 0)
+				color = colorG;
+			else if (time % 11 == 0)
+				color = colorB;
+			
+
 			tekst << "Czas:" << time;
 			tekst2 << "Punkty:0";
 			tekst3 << "Zacznij gre";
 			tekst4 << "spacja";
 
-			SDL_Surface * surface = TTF_RenderText_Solid(font,tekst.str().c_str() , color);
-			SDL_Surface * surface2 = TTF_RenderText_Solid(font,tekst2.str().c_str() , color);
+
+			SDL_Surface * surface = TTF_RenderText_Solid(font,tekst.str().c_str() , colorW);
+			SDL_Surface * surface2 = TTF_RenderText_Solid(font,tekst2.str().c_str() , colorW);
 			SDL_Surface * surface3 = TTF_RenderText_Solid(font,tekst3.str().c_str() , color);
+			SDL_Surface * surface4 = TTF_RenderText_Solid(font,tekst4.str().c_str() , color);
 			SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
 			SDL_Texture * texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
 			SDL_Texture * texture3 = SDL_CreateTextureFromSurface(renderer, surface3);
+			SDL_Texture * texture4 = SDL_CreateTextureFromSurface(renderer, surface4);
 			SDL_QueryTexture(texture, NULL, NULL, &widthText, &heightText);
 			SDL_QueryTexture(texture2, NULL, NULL, &widthText, &heightText);
 			SDL_QueryTexture(texture3, NULL, NULL, &widthText, &heightText);
+			SDL_QueryTexture(texture4, NULL, NULL, &widthText, &heightText);
 		//	SDL_QueryTexture(texture_sprezyna, NULL, NULL, &widthText2, &heightText2);
 			SDL_Rect positionText = { 700,0,100,heightText };
 			SDL_Rect positionText2 = { 700,30,100,heightText };
-			SDL_Rect positionText3 = { 600,60,widthText,heightText };
+			SDL_Rect positionText3 = { 650,470,100,heightText };
+			SDL_Rect positionText4 = { 650,500,100,heightText };
+	
 			//SDL_Rect positionSprezyna = { 0,0,0,0 };
 
 			SDL_RenderClear(renderer);// wyczyszczenie rendera
 			SDL_RenderCopy(renderer, table, NULL, &texr);//rysowanie tla
 			DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
 			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball._position);// rysowanie pilki
+			if (counterAnimation < 10)
+				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna1.PNG");
+			else if(counterAnimation>10 && counterAnimation<30)
+				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna2.PNG");
+			else if(counterAnimation>30 && counterAnimation < 50)
+				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna3.PNG");
+			else if(counterAnimation>50)
+				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna4.PNG");
+			//printf("counter:%i", counterAnimation);
 			SDL_RenderCopy(renderer, sprezyna.img, NULL, &sprezyna._position);
 
 			SDL_RenderCopy(renderer, texture, NULL, &positionText);
 			SDL_RenderCopy(renderer, texture2, NULL, &positionText2);
 			SDL_RenderCopy(renderer, texture3, NULL, &positionText3);
+			SDL_RenderCopy(renderer, texture4, NULL, &positionText4);
 
 			
 
