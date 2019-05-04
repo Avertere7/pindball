@@ -22,22 +22,22 @@ c:\sdl\pindball-master\pinball\pinball\source.cpp(369): warning C4244: "=": konw
 c:\sdl\pindball-master\pinball\pinball\source.cpp(518): warning C4305: "argument": obcięcie z "double" do "float"
 c:\sdl\pindball-master\pinball\pinball\source.cpp(519): warning C4305: "argument": obcięcie z "double" do "float"
 c:\sdl\pindball-master\pinball\pinball\source.cpp(522): warning C4305: "argument": obcięcie z "double" do "float"
-c:\sdl\pindball-master\pinball\pinball\source.cpp(653): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(654): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(660): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(661): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(662): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(523): warning C4305: "argument": obcięcie z "double" do "float"
+c:\sdl\pindball-master\pinball\pinball\source.cpp(656): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(657): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
 c:\sdl\pindball-master\pinball\pinball\source.cpp(663): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(674): warning C4244: "argument": konwersja z "int" do "float", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(679): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(680): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(686): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(687): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(688): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(689): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(701): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(702): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(745): warning C4244: "argument": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(746): warning C4244: "argument": konwersja z "float" do "int", możliwa utrata danych
-c:\sdl\pindball-master\pinball\pinball\source.cpp(756): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+c:\sdl\pindball-master\pinball\pinball\source.cpp(664): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(665): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(666): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(685): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(686): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(692): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(693): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(694): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(695): warning C4244: "argument": konwersja z "double" do "float", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(707): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(708): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(751): warning C4244: "argument": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(752): warning C4244: "argument": konwersja z "float" do "int", możliwa utrata danych
+c:\sdl\pindball-master\pinball\pinball\source.cpp(763): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
   Pinball.vcxproj -> C:\SDL\pindball-master\Pinball\Pinball\Debug\Pinball.exe

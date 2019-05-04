@@ -520,6 +520,8 @@ int main(int argc, char* args[])
 		RownanieProstej prawaKrawedzRura(1, 0, -603, -20, 800, 60, 600, true);
 		RownanieProstej dolnaKrawedzRury(0, 1, -489, 579, 603, -20, 800, true);
 		RownanieProstej skosRury(2.3333333333333335, -1, -1348.3333333333335, 579, 603, 30, 60);
+		RownanieProstej lewadolna(0.38461538461538464, -1, 400, 0, 130, 400, 450,true);
+
 
 
 		kolaidery.push_back(&prawaKrawedzD);
@@ -531,6 +533,7 @@ int main(int argc, char* args[])
 		kolaidery.push_back(&pramie);
 		kolaidery.push_back(&prawaKrawedzRura);
 		kolaidery.push_back(&skosRury);
+		kolaidery.push_back(&lewadolna);
 
 		//kolaidery.push_back(RownanieProstej(1,2,3,4,5,6,7));
 		
@@ -670,27 +673,30 @@ int main(int argc, char* args[])
 			printf("kolajder x: \n %f\n", Ball.kolidery[0].x);
 			printf("kolajder y: \n %f\n", Ball.kolidery[0].y);
 
+			for (int i = 0; i < 8; i++) {
 
-				if (bumper1.kolider.wykrycieKolizji(Ball._position.x, Ball._position.y))
+				
+
+				if (bumper1.kolider.wykrycieKolizji(Ball.kolidery[i].x, Ball.kolidery[i].y))
 				{
 					printf("predkosc x:%f \n", Ball.velocity.getX());
 					printf("predkosc Y:%f \n", Ball.velocity.getY());
 
 					Ball._position.x = Ball._position.x - Ball.velocity.getX();
 					Ball._position.y = Ball._position.y - Ball.velocity.getY();
-					
+
 					RownanieProstej pom = bumper1.kolider.prostopadlaWpunkcie(Ball._position.x, Ball._position.y);
 					Ball.velocity.odbicieOdProstej(pom);
 					Ball.acceleration.odbicieOdProstej(pom);
-					
+
 					Ball.velocity.setY(Ball.velocity.getY()*0.8);
 					Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
 					Ball.velocity.setX(Ball.velocity.getX()*0.8);
 					Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
 					printf("kolizja \n");
-				
+
 				}
-				
+			}
 	
 		//	Ball.Gravity();
 			Ball.SetVelocity();
@@ -749,6 +755,7 @@ int main(int argc, char* args[])
 			SDL_RenderDrawLine(renderer, 603, 60, 603, 600);// pkrawedzRura
 			SDL_RenderDrawLine(renderer, 579, 489, 603, 489);// dkrawedzRura
 			SDL_RenderDrawLine(renderer, 579, 30, 603, 60);// skosRura	
+			SDL_RenderDrawLine(renderer, 0, 400, 130, 450);// skosRura	
 
 			//SDL_RenderDrawLine(renderer, 355, 500, 495, 450);// pramie
 			SDL_RenderPresent(renderer);// wyswietlenie
