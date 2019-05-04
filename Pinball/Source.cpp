@@ -224,6 +224,9 @@ public:
 };
 
 
+
+
+
 class MovableObject {
 public:
 	vector2d velocity;
@@ -281,7 +284,8 @@ class  RownanieOkregu  {
 public:
 	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
 	float a, b, r; //(x-a)^2+(y-b)^2=r^
-
+	RownanieOkregu()
+	{}
 
 	RownanieOkregu(float a, float b, float r, float xMin, float xMax, float yMin, float yMax) {
 		this->a = a;
@@ -354,7 +358,18 @@ void DrawNewLine(RownanieProstej* prosta,float kat)
 	
 }
 
+class bumper :public AnimatedObject {
+public:
+	RownanieOkregu kolider;
+	int points;
 
+	void setKolider(int r) {
+		kolider.a = _position.x;
+		kolider.b = _position.y;
+		kolider.r = r;
+}
+
+};
 
 
 //The window we'll be rendering to
@@ -460,8 +475,8 @@ int main(int argc, char* args[])
 		MovableObject Ball;
 		IMG_Init(IMG_INIT_PNG);
 		Ball.img = IMG_LoadTexture(renderer, "images/ball.PNG");
-		Ball._position.x = 583;
-		Ball._position.y = 469;
+		Ball._position.x = 40;
+		Ball._position.y = 40;
 		/*Ball._position.x = 30;
 		Ball._position.y = 50;*/
 		Ball._position.h = 20;
@@ -482,6 +497,14 @@ int main(int argc, char* args[])
 		sprezyna._position.h = 60;
 		sprezyna._position.w = 24;
 
+		bumper bumper1;
+		IMG_Init(IMG_INIT_PNG);
+		bumper1.img = IMG_LoadTexture(renderer, "images/bumper1.PNG");
+		bumper1._position.x = 150;
+		bumper1._position.y = 150;
+		bumper1._position.h = 49;
+		bumper1._position.w = 49;
+		bumper1.setKolider(20);
 
 		std::vector<RownanieProstej*> kolaidery;
 		kolaidery.reserve(99);
@@ -646,29 +669,28 @@ int main(int argc, char* args[])
 
 			printf("kolajder x: \n %f\n", Ball.kolidery[0].x);
 			printf("kolajder y: \n %f\n", Ball.kolidery[0].y);
-				//if (pierwszaO.wykrycieKolizji(Ball._position.x, Ball._position.y))
-				//{
-				//	printf("predkosc x:%f \n", Ball.velocity.getX());
-				//	printf("predkosc Y:%f \n", Ball.velocity.getY());
 
-				//	Ball._position.x = Ball._position.x - Ball.velocity.getX();
-				//	Ball._position.y = Ball._position.y - Ball.velocity.getY();
-				//	
-				//	RownanieProstej pom = pierwszaO.prostopadlaWpunkcie(Ball._position.x, Ball._position.y);
-				//	Ball.velocity.odbicieOdProstej(pom);
-				//	Ball.acceleration.odbicieOdProstej(pom);
-				//	
-				//	Ball.velocity.setY(Ball.velocity.getY()*0.8);
-				//	Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
-				//	Ball.velocity.setX(Ball.velocity.getX()*0.8);
-				//	Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
-				//	printf("kolizja \n");
-				//	//printf("predkosc x:%f \n",Ball.velocity.getX());
-				//	//printf("predkosc Y:%f \n", Ball.velocity.getY());
-				//	printf("wspolrzedne x:%i \n", Ball._position.x);
-				//	printf("wspolrzedne y:%i \n", Ball._position.y);
-				//}
-				//
+
+				if (bumper1.kolider.wykrycieKolizji(Ball._position.x, Ball._position.y))
+				{
+					printf("predkosc x:%f \n", Ball.velocity.getX());
+					printf("predkosc Y:%f \n", Ball.velocity.getY());
+
+					Ball._position.x = Ball._position.x - Ball.velocity.getX();
+					Ball._position.y = Ball._position.y - Ball.velocity.getY();
+					
+					RownanieProstej pom = bumper1.kolider.prostopadlaWpunkcie(Ball._position.x, Ball._position.y);
+					Ball.velocity.odbicieOdProstej(pom);
+					Ball.acceleration.odbicieOdProstej(pom);
+					
+					Ball.velocity.setY(Ball.velocity.getY()*0.8);
+					Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+					Ball.velocity.setX(Ball.velocity.getX()*0.8);
+					Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
+					printf("kolizja \n");
+				
+				}
+				
 	
 		//	Ball.Gravity();
 			Ball.SetVelocity();
@@ -713,6 +735,7 @@ int main(int argc, char* args[])
 			DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
 			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball._position);// rysowanie pilki
 			SDL_RenderCopy(renderer, sprezyna.img, NULL, &sprezyna._position);
+			SDL_RenderCopy(renderer, bumper1.img, NULL, &bumper1._position);
 
 			SDL_RenderCopy(renderer, texture, NULL, &positionText);
 			SDL_RenderCopy(renderer, texture2, NULL, &positionText2);
