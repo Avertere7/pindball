@@ -238,12 +238,20 @@ public:
 	void SetAcceleration(float x, float y) {
 		float ay = acceleration.getY() + y;
 		float ax = acceleration.getX() + x;
+		if (ax > 0.5)
+			ax = 0.5;
+		if (ay > 0.5)
+			ay = 0.5;
 		acceleration.setY(ay);
 		acceleration.setX(ax);
 	}
 	void SetVelocity() {
 		float ax = velocity.getX() + acceleration.getX()*dt;
 		float ay = velocity.getY() + acceleration.getY()*dt;
+		if (ax > 5)
+			ax = 5;
+		if (ay > 5)
+			ay = 5;
 		velocity.setX(ax);
 		velocity.setY(ay);
 
@@ -493,8 +501,12 @@ int main(int argc, char* args[])
 		RownanieProstej lewaKrawedz(1, 0, 0, -20, 800, -20, 800);
 		RownanieProstej gornaKrawedz(0, 1, 0, -20, 800, -20, 800);
 		//RownanieProstej dolnaKrawedz(0, 1, -500, -20, 800, -20, 800,true);//usunalem dolna bo nie jest potrzebna
-		RownanieProstej lramie(0.357142, -1, 382.1428, 190, 330, 450, 500,true);
-		RownanieProstej pramie(-0.357142, -1, 626.7857, 355, 495,  450, 500);
+		//RownanieProstej lramie(0.357142, -1, 382.1428, 190, 330, 450, 500,true);
+		RownanieProstej lramie(0.357142, -1, 382.1428, 130, 270, 450, 500,true);
+		RownanieProstej lramieProsta(0.38461538461538464, -1, 400, 0, 130, 400, 450);
+		//RownanieProstej pramie(-0.357142, -1, 626.7857, 355, 495,  450, 500);
+		RownanieProstej pramie(-0.357142, -1, 626.7857, 310, 450,  450, 500);
+		RownanieProstej pramieProsta(-0.384615, 1, 226.923, 450,580,  400, 450);
 		RownanieProstej prawaKrawedzRura(1, 0, -603, -20, 800, 60, 600, true);
 		RownanieProstej dolnaKrawedzRury(0, 1, -489, 579, 603, -20, 800, true);
 		RownanieProstej skosRury(2.3333333333333335, -1, -1348.3333333333335, 579, 603, 30, 60);
@@ -508,6 +520,8 @@ int main(int argc, char* args[])
 		kolaidery.push_back(&pramie);
 		kolaidery.push_back(&prawaKrawedzRura);
 		kolaidery.push_back(&skosRury);
+		kolaidery.push_back(&lramieProsta);
+		kolaidery.push_back(&pramieProsta);
 
 		//kolaidery.push_back(RownanieProstej(1,2,3,4,5,6,7));
 		
@@ -629,11 +643,7 @@ int main(int argc, char* args[])
 			//	}
 			//}();
 			//printf("Wyjscie \n");
-			if (Ball._position.x < 500)
-			{
-				kolaidery.erase(kolaidery.begin() + 6);
-				kolaidery.push_back(&prawaKrawedzD);
-			}
+			
 
 			if (!lramie.rusza)
 				DrawNewLine(&lramie, -2);
@@ -730,7 +740,14 @@ int main(int argc, char* args[])
 			tekst2 << "Punkty:0";
 			tekst3 << "Zacznij gre";
 			tekst4 << "spacja";
+			if (Ball._position.x < 500)
+			{
+				kolaidery.erase(kolaidery.begin() + 6);
+				kolaidery.push_back(&prawaKrawedzD);
+				tekst3.str("");
+				tekst4.str("");
 
+			}
 
 			SDL_Surface * surface = TTF_RenderText_Solid(font,tekst.str().c_str() , colorW);
 			SDL_Surface * surface2 = TTF_RenderText_Solid(font,tekst2.str().c_str() , colorW);
@@ -775,7 +792,9 @@ int main(int argc, char* args[])
 			
 
 			SDL_RenderDrawLine(renderer, lramie.xMin, lramie.yMin, lramie.xMax, lramie.yMax);// lramie
+			SDL_RenderDrawLine(renderer, lramieProsta.xMin, lramieProsta.yMin, lramieProsta.xMax, lramieProsta.yMax);// lramieProsta
 			SDL_RenderDrawLine(renderer, pramie.xMin, pramie.yMax, pramie.xMax, pramie.yMin);// pramie
+			SDL_RenderDrawLine(renderer, pramieProsta.xMin, pramieProsta.yMax, pramieProsta.xMax, pramieProsta.yMin);// pramieProsta
 			SDL_RenderDrawLine(renderer,579, 0, 579, 30);// pGkrawedz
 			SDL_RenderDrawLine(renderer, 579, 67, 579, 600);// pDkrawedz
 			SDL_RenderDrawLine(renderer, 603, 60, 603, 600);// pkrawedzRura
