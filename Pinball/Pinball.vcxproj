@@ -128,12 +128,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MovableObject.cpp" />
+    <ClCompile Include="RownanieProstej.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="RownanieOkregu.cpp" />
+    <ClCompile Include="Vector2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Users\Lawrence\Desktop\pinbal grafika\Bez nazwy.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedObject.h" />
+    <ClInclude Include="RownanieOkregu.h" />
+    <ClInclude Include="MovableObject.h" />
+    <ClInclude Include="Position.h" />
+    <ClInclude Include="RownanieProstej.h" />
+    <ClInclude Include="Vector2d.h" />
     <ClInclude Include="veclib\veclib.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -6,7 +6,6 @@ and may not be redistributed without written permission.*/
 #include <stdio.h>
 #include <SDL_image.h>
 #include <cmath>
-#include <vector>
 #include <algorithm>
 #include <iostream>
 #include <math.h>
@@ -14,6 +13,13 @@ and may not be redistributed without written permission.*/
 #include <Windows.h>
 #include <sstream>
 #include <string>
+#include "RownanieProstej.h"
+#include "Vector2d.h"
+#include <vector>
+#include "Position.h"
+#include "MovableObject.h"
+#include "AnimatedObject.h"
+#include "RownanieOkregu.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 800;
@@ -31,7 +37,6 @@ bool loadMedia();
 //Frees media and shuts down SDL
 void close();
 
-// test
 
 void DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centreY, int32_t radius)
 {
@@ -72,295 +77,9 @@ void DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centreY, int32
 }
 
 
-struct position {
-	float x;
-	float y;
-};
-position make_position(float x, float y)
-{
-	position p = { x,y };
-	return p;
-}
-//class Rownanie
-//{
-//public:
-//	bool  wykrycieKolizji()
-//	{
-//		printf("%s", "base");
-//		return false;
-//	}
-//};
-class RownanieProstej  { //dla postaci ax+by+c=0
-public:
-	float a, b, c, wektorNormalnyY, wektorNormalnyX; //spolczynniki funkcji
-	float xMin, xMax, yMin, yMax,stopnie;// zakresy dzialania funkcji
-	bool lewa,rusza;
-
-	RownanieProstej(float a, float b, float c, float xMin, float xMax, float yMin, float yMax,bool lewa=false) {
-		this->a = a;
-		this->b = b;
-		this->c = c;
-		this->xMax = xMax;
-		this->xMin = xMin;
-		this->yMax = yMax;
-		this->yMin = yMin;
-		this->lewa = lewa;
-		this->stopnie = 0;
-		setWektorNormalny();
-
-	
-	}
-
-	 bool wykrycieKolizji(float x, float y)
-	{
-		if(lewa)
-		{
-			if (xMin<x && xMax>x && yMin<y && yMax>y) {
-
-				if ((a*x + b * y + c) >= 0) {
-					return true;
-				}
-				else
-					return false;
-			}
-			return false;
-		}
-		else
-		{
-			if (xMin<x && xMax>x && yMin<y && yMax>y) {
-
-				if ((a*x + b * y + c) <= 0) {
-					return true;
-				}
-				else
-					return false;
-			}
-			return false;
-		}
-		return false;
-	}
-	 void setWektorNormalny()
-	 {
-		 wektorNormalnyX = (a / (a + b));
-		 wektorNormalnyY = (b / (a + b));
-		 if (lewa) {
-			 wektorNormalnyX = -wektorNormalnyX;
-			 wektorNormalnyY = -wektorNormalnyY;
-		 }
-	}
-};
-
-class vector2d {
-private:
-	float x;
-	float y;
-public:
-	void setX(float x) {
-		this->x = x;
-	}
-	void setY(float y) {
-		this->y = y;
-	}
-	float getY() {
-		return y;
-	}
-	float getX() {
-		return x;
-	}
-
-	float normalize() {
-
-		return(x / (x + y), y / (x + y));
-
-	}
-
-	float iloczynSkalarny(float X, float Y) {
-		float iloczyn;
-		iloczyn = x * X + y * Y;
-		return iloczyn;
-	}
-
-	void odbicieOdProstej(RownanieProstej prosta) {
-		vector2d normalna;
-		normalna.setX(prosta.wektorNormalnyX);
-		normalna.setY(prosta.wektorNormalnyY);
-		float rx;
-		float ry;
-		rx = x - 2 * (x*normalna.getX()+y*normalna.getY())*normalna.getX();
-		ry = y - 2 * (x*normalna.getX() + y * normalna.getY())*normalna.getY();
-		//printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
-		
-			x = rx;
-			y = ry;
-		
-
-	}
-	
-	void odbicieOdOkregu(int Ox, int Oy, int px, int py) {
-
-		
-		float pomx=Ox-px;
-		float pomy=Oy - py;
-		float pom = pomx + pomy;
-		pomx = pomx / abs(pom)*2;
-		pomy = pomy / abs(pom)*2;
-
-		float rx;
-		float ry;
-		rx = x - 2 * (x*pomx + y * pomy)*pomx;
-		ry = y - 2 * (x*pomx + y * pomy)*pomy;
-
-		x = rx;
-		y = ry;
-
-	}
-
-};
-
-class AnimatedObject {
-public:
-	SDL_Rect _position;
-	SDL_Texture *img = NULL;
-};
 
 
-class MovableObject {
-public:
-	vector2d velocity;
-	vector2d acceleration;
-	SDL_Rect _position;
-	SDL_Texture *img = NULL;
-	position kolidery[8];
-	const float gravity = 0.5;
-	const float dt = 1 / 30.0; // przyrost czasu
-	MovableObject();
 
-	void SetAcceleration(float x, float y) {
-		float ay = acceleration.getY() + y;
-		float ax = acceleration.getX() + x;
-		if (ax > 0.5)
-			ax = 0.5;
-		if (ay > 0.5)
-			ay = 0.5;
-		acceleration.setY(ay);
-		acceleration.setX(ax);
-	}
-	void SetVelocity() {
-		float ax = velocity.getX() + acceleration.getX()*dt;
-		float ay = velocity.getY() + acceleration.getY()*dt;
-		if (ax > 5)
-			ax = 5;
-		if (ay > 5)
-			ay = 5;
-		velocity.setX(ax);
-		velocity.setY(ay);
-
-
-	}
-	void Gravity() {
-		float g = acceleration.getY() + 0.5;
-		acceleration.setY(g);
-		acceleration.setX(acceleration.getX());
-
-	}
-	
-	void setKolaider()
-	{
-		kolidery[0]=(make_position(_position.x + 9, _position.y));
-		kolidery[1] = (make_position(_position.x + 9, _position.y + 19));
-		kolidery[2] = (make_position(_position.x, _position.y + 9));
-		kolidery[3] = (make_position(_position.x + 19, _position.y + 9));
-		kolidery[4] = (make_position(_position.x + 3, _position.y + 2));
-		kolidery[5] = (make_position(_position.x + 16, _position.y + 2));
-		kolidery[6] = (make_position(_position.x + 16, _position.y + 17));
-		kolidery[7] = (make_position(_position.x + 3, _position.y + 17));
-	}
-};
-
-MovableObject::MovableObject()
-{
-	acceleration.setY(0.0f);
-	acceleration.setX(0.0f);
-	velocity.setY(0.0f);
-	velocity.setX(0.0f);
-}
-
-class  RownanieOkregu  {
-public:
-	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
-	float a, b, r; //(x-a)^2+(y-b)^2=r^
-
-
-	RownanieOkregu(float a, float b, float r, float xMin, float xMax, float yMin, float yMax) {
-		this->a = a;
-		this->b = b;
-		this->r = r;
-		this->xMax = xMax;
-		this->xMin = xMin;
-		this->yMax = yMax;
-		this->yMin = yMin;
-	}
-	RownanieProstej prostopadlaWpunkcie(int wspX, int wspY) {
-		float A = wspX - a;
-		float B = wspY - b;
-		float C = -(wspX - a)*a - (wspY - b)*b - pow(r, 2);
-		RownanieProstej prosta(A, B, C, 0, 800, 0, 600);
-		return prosta;
-	}
-	bool wykrycieKolizji(float wspX, float wspY)
-	{
-		if(((wspX-a)*(wspX - a))+((wspY-b)*(wspY - b))-(r*r)<=0)
-		{
-			return true;
-		}
-		/*if (sqrt(pow(wspX - a, 2) + pow(wspY - b, 2)) >= r)
-			return true;*/
-		
-		return false;
-	}
-
-};
-
-position GetNewPointByAngle(RownanieProstej* prosta,float kat) //xmax i ymax - 
-{
-	//printf("staryx:%f,staryy:%f\n", prosta->xMin, prosta->yMin);
-	// xmin ymin - srodek
-	//	((prosta->xMax - prosta->xMin)*cos( M_PI / 180 * 2) - (prosta->yMax - prosta->yMin)*sin( M_PI / 180 * 2) + prosta->xMin); - ogolny wzor
-
-		float roznicax = prosta->xMax - prosta->xMin;
-		float roznicay = prosta->yMax - prosta->yMin;
-		float radians = kat / 180 * M_PI;
-		float wspolczynnikcos = cos(radians);
-		float wspolczynniksin = sin(radians);
-
-		float newx = (roznicax * wspolczynnikcos) - (roznicay*wspolczynniksin) + prosta->xMin;
-		float newy = (roznicay * wspolczynnikcos) - (roznicax * wspolczynniksin) + prosta->yMin;
-		//prosta->a = (newy - prosta->yMin) / (newx - prosta->xMin);
-	//	printf("roznicax:%f,roznicay:%f,wspX:%f,wspY:%f,newx:%f,radians:%f\n", roznicax,roznicay,wspolczynnikcos,wspolczynniksin,newx,radians);
-
-	
-		return make_position(newx, newy);
-	
-
-	
-
-}
-void DrawNewLine(RownanieProstej* prosta,float kat)
-{
-
-		if (prosta->stopnie == 0 && kat < 0 ||  prosta->stopnie ==20 && kat >0 )
-			return;
-		position newPosition = GetNewPointByAngle(prosta,kat);
-		prosta->xMax = round(newPosition.x);
-		prosta->yMax = round(newPosition.y);
-
-		prosta->a =  (prosta->yMin - prosta->yMax)/(prosta->xMin - prosta->xMax);
-		prosta->c = prosta->yMin - prosta->a*prosta->xMin;
-		prosta->setWektorNormalny();
-		prosta->stopnie += kat;
-		printf("x1:%f,y1:%fx2:%f,y2:%f,a:%f,c:%f,stopnie:%f\n", prosta->xMin, prosta->xMax, prosta->yMin, prosta->yMax, prosta->a, prosta->c, prosta->stopnie);
-	
-}
 
 
 
@@ -496,17 +215,17 @@ int main(int argc, char* args[])
 		kolaidery.reserve(99);
 
 		//RownanieProstej prawaKrawedz(1, 0, -569, -20, 800, -20, 800,true); //prawy kolaider zastapiony dwmoa ponizej 
-		RownanieProstej prawaKrawedzG(1, 0, -579, -20, 800, 0,30, true);
-		RownanieProstej prawaKrawedzD(1, 0, -579,-20,583,67,600,true);
+		RownanieProstej prawaKrawedzG(1, 0, -579, -20, 800, 0, 30, true);
+		RownanieProstej prawaKrawedzD(1, 0, -579, -20, 583, 67, 600, true);
 		RownanieProstej lewaKrawedz(1, 0, 0, -20, 800, -20, 800);
 		RownanieProstej gornaKrawedz(0, 1, 0, -20, 800, -20, 800);
 		//RownanieProstej dolnaKrawedz(0, 1, -500, -20, 800, -20, 800,true);//usunalem dolna bo nie jest potrzebna
 		//RownanieProstej lramie(0.357142, -1, 382.1428, 190, 330, 450, 500,true);
-		RownanieProstej lramie(0.357142, -1, 382.1428, 130, 270, 450, 500,true);
-		RownanieProstej lramieProsta(0.38461538461538464, -1, 400, 0, 130, 400, 450);
+		RownanieProstej lramie(0.357142, -1, 382.1428, 130, 270, 450, 500, true);
+		RownanieProstej lramieProsta(0.38461538461538464, -1, 400, 0, 130, 400, 450, true);
 		//RownanieProstej pramie(-0.357142, -1, 626.7857, 355, 495,  450, 500);
-		RownanieProstej pramie(-0.357142, -1, 626.7857, 310, 450,  450, 500);
-		RownanieProstej pramieProsta(-0.384615, 1, 226.923, 450,580,  400, 450);
+		RownanieProstej pramie(-0.35714285714285715, -1, 610.7142857142858, 310, 450, 450, 500, true);
+		RownanieProstej pramieProsta(-0.384615, -1, 623.0769230769231, 450, 580, 400, 450);
 		RownanieProstej prawaKrawedzRura(1, 0, -603, -20, 800, 60, 600, true);
 		RownanieProstej dolnaKrawedzRury(0, 1, -489, 579, 603, -20, 800, true);
 		RownanieProstej skosRury(2.3333333333333335, -1, -1348.3333333333335, 579, 603, 30, 60);
@@ -569,12 +288,12 @@ int main(int argc, char* args[])
 					if (e.key.keysym.sym == SDLK_z)
 					{
 
-						DrawNewLine(&lramie, 2);
+						lramie.DrawNewLine(&lramie, 2);
 						lramie.rusza = true;
 					}
 					if (e.key.keysym.sym == SDLK_x)
 					{
-						DrawNewLine(&pramie, 2);
+						pramie.DrawNewLine(&pramie, 2);
 						pramie.rusza = true;
 					}
 					if (e.key.keysym.sym == SDLK_SPACE)
@@ -646,9 +365,9 @@ int main(int argc, char* args[])
 			
 
 			if (!lramie.rusza)
-				DrawNewLine(&lramie, -2);
+				lramie.DrawNewLine(&lramie, -2);
 			if (!pramie.rusza)
-				DrawNewLine(&pramie, -2);
+				pramie.DrawNewLine(&pramie, -2);
 
 			for (auto &collider : kolaidery)
 			{
@@ -702,6 +421,45 @@ int main(int argc, char* args[])
 	
 		//	Ball.Gravity();
 			Ball.SetVelocity();
+
+
+			if (Ball.velocity.getX() > 10)
+			{
+				Ball.velocity.setX(10);
+			}
+			if (Ball.velocity.getX() < -10)
+			{
+				Ball.velocity.setX(-10);
+			}
+			if (Ball.velocity.getY() > 10)
+			{
+				Ball.velocity.setY(10);
+			}
+			if (Ball.velocity.getY() < -10)
+			{
+				Ball.velocity.setY(-10);
+			}
+
+
+			if (Ball.acceleration.getX() > 1)
+			{
+				Ball.acceleration.setX(1);
+			}
+			if (Ball.acceleration.getX() < -1)
+			{
+				Ball.acceleration.setX(-1);
+			}
+			if (Ball.acceleration.getY() > 1)
+			{
+				Ball.acceleration.setY(1);
+			}
+			if (Ball.acceleration.getY() < -1)
+			{
+				Ball.acceleration.setY(-1);
+			}
+
+			Ball.acceleration.setY(Ball.acceleration.getY() + 0.015);
+
 
 			//printf("%f\n", Ball.position.y);
 

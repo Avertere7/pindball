@@ -1,33 +1,314 @@
-﻿  Source.cpp
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(202): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(203): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(235): warning C4305: 'initializing': truncation from 'double' to 'const float'
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(253): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(261): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(262): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(263): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(264): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(265): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(266): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(267): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(268): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(290): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(291): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(292): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(293): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(324): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(496): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(497): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(500): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(650): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(651): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(657): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(658): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(659): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(660): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(699): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(700): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(777): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(778): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\avertere\desktop\pindball-master\pinball\source.cpp(788): warning C4018: '<': signed/unsigned mismatch
-  Pinball.vcxproj -> C:\Users\Avertere\Desktop\pindball-master\Pinball\Debug\Pinball.exe
+﻿  MovableObject.cpp
+c:\users\avertere\desktop\pindball-master\pinball\position.h(1): error C2011: 'position': 'struct' type redefinition
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.h(11): error C2079: 'MovableObject::kolidery' uses undefined struct 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.h(13): warning C4305: 'initializing': truncation from 'double' to 'const float'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(9): error C2600: 'MovableObject::MovableObject': cannot define a compiler-generated special member function (must be declared in the class first)
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(39): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(47): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(47): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(48): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(48): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(49): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(49): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(50): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(50): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(51): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(51): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(51): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(52): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(52): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(53): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(53): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(54): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(54): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(54): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(58): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(59): error C2079: 'p' uses undefined struct 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(59): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\movableobject.cpp(59): note: The initializer contains too many elements
+  RownanieProstej.cpp
+c:\users\avertere\desktop\pindball-master\pinball\position.h(1): error C2011: 'position': 'struct' type redefinition
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): error C2011: 'RownanieProstej': 'class' type redefinition
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.h(11): error C2079: 'MovableObject::kolidery' uses undefined struct 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.h(13): warning C4305: 'initializing': truncation from 'double' to 'const float'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(9): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(9): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(10): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(11): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(12): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(13): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(14): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(15): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(16): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(17): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(18): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(19): error C3861: 'setWektorNormalny': identifier not found
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(22): warning C4508: '{ctor}': function should return a value; 'void' return type assumed
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(24): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(26): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(28): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(30): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(40): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(42): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(52): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(54): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(55): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(56): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(57): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(58): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(62): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(65): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(67): error C2079: 'newPosition' uses undefined struct 'position'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(67): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(68): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(69): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(71): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(72): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(73): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(74): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(78): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(79): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(84): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(85): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(86): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(90): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(91): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(96): error C3861: 'make_position': identifier not found
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(102): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(103): error C2027: use of undefined type 'position'
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(104): error C2079: 'p' uses undefined struct 'position'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(104): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.cpp(104): note: The initializer contains too many elements
+  Source.cpp
+c:\users\avertere\desktop\pindball-master\pinball\position.h(1): error C2011: 'position': 'struct' type redefinition
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): error C2011: 'RownanieProstej': 'class' type redefinition
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.h(11): error C2079: 'MovableObject::kolidery' uses undefined struct 'position'
+c:\users\avertere\desktop\pindball-master\pinball\movableobject.h(13): warning C4305: 'initializing': truncation from 'double' to 'const float'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(218): error C2079: 'prawaKrawedzG' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(218): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(218): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(219): error C2079: 'prawaKrawedzD' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(219): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(219): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(220): error C2079: 'lewaKrawedz' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(220): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(220): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(221): error C2079: 'gornaKrawedz' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(221): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(221): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(224): error C2079: 'lramie' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(224): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(224): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(225): error C2079: 'lramieProsta' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(225): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(225): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(227): error C2079: 'pramie' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(227): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(227): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(228): error C2079: 'pramieProsta' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(228): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(228): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(229): error C2079: 'prawaKrawedzRura' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(229): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(229): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(230): error C2079: 'dolnaKrawedzRury' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(230): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(230): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(231): error C2079: 'skosRury' uses undefined class 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(231): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(231): note: The initializer contains too many elements
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(234): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(234): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(234): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(235): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(235): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(235): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(236): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(236): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(236): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(238): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(238): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(238): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(239): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(239): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(239): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(240): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(240): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(240): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(241): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(241): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(241): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(242): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(242): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(242): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(243): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(243): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(243): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(376): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(376): error C2109: subscript requires array or pointer type
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(379): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(380): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(383): error C2664: 'void vector2d::odbicieOdProstej(RownanieProstej)': cannot convert argument 1 from 'RownanieProstej' to 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(383): note: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(384): error C2664: 'void vector2d::odbicieOdProstej(RownanieProstej)': cannot convert argument 1 from 'RownanieProstej' to 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(384): note: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(386): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(387): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(388): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(389): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(461): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(467): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(468): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(504): error C2664: 'void std::vector<RownanieProstej *,std::allocator<_Ty>>::push_back(_Ty &&)': cannot convert argument 1 from 'int *' to 'const _Ty &'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(504): note: Reason: cannot convert from 'int *' to 'const _Ty'
+          with
+          [
+              _Ty=RownanieProstej *
+          ]
+  c:\users\avertere\desktop\pindball-master\pinball\source.cpp(504): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(552): error C2660: 'SDL_RenderDrawLine': function does not take 1 arguments
+  c:\sdl\sdl2\include\sdl_render.h(733): note: see declaration of 'SDL_RenderDrawLine'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(553): error C2660: 'SDL_RenderDrawLine': function does not take 1 arguments
+  c:\sdl\sdl2\include\sdl_render.h(733): note: see declaration of 'SDL_RenderDrawLine'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(554): error C2660: 'SDL_RenderDrawLine': function does not take 1 arguments
+  c:\sdl\sdl2\include\sdl_render.h(733): note: see declaration of 'SDL_RenderDrawLine'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(555): error C2660: 'SDL_RenderDrawLine': function does not take 1 arguments
+  c:\sdl\sdl2\include\sdl_render.h(733): note: see declaration of 'SDL_RenderDrawLine'
+c:\users\avertere\desktop\pindball-master\pinball\source.cpp(565): warning C4018: '<': signed/unsigned mismatch
+  RownanieOkregu.cpp
+c:\users\avertere\desktop\pindball-master\pinball\position.h(1): error C2011: 'position': 'struct' type redefinition
+  c:\users\avertere\desktop\pindball-master\pinball\position.h(1): note: see declaration of 'position'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): error C2011: 'RownanieProstej': 'class' type redefinition
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieokregu.cpp(14): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\rownanieokregu.cpp(15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\rownanieokregu.cpp(16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\rownanieokregu.cpp(17): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\rownanieokregu.cpp(19): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+c:\users\avertere\desktop\pindball-master\pinball\rownanieokregu.cpp(22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\rownanieokregu.cpp(24): error C2027: use of undefined type 'RownanieProstej'
+  c:\users\avertere\desktop\pindball-master\pinball\rownanieprostej.h(3): note: see declaration of 'RownanieProstej'
+  Vector2d.cpp
+c:\users\avertere\desktop\pindball-master\pinball\vector2d.cpp(56): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\avertere\desktop\pindball-master\pinball\vector2d.cpp(57): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  Generating Code...
