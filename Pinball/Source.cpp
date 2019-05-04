@@ -327,7 +327,7 @@ position GetNewPointByAngle(RownanieProstej* prosta,float kat) //xmax i ymax -
 	// xmin ymin - srodek
 	//	((prosta->xMax - prosta->xMin)*cos( M_PI / 180 * 2) - (prosta->yMax - prosta->yMin)*sin( M_PI / 180 * 2) + prosta->xMin); - ogolny wzor
 
-		float roznicax = prosta->xMax - prosta->xMin;
+		float roznicax = (prosta->xMax - prosta->xMin);
 		float roznicay = prosta->yMax - prosta->yMin;
 		float radians = kat / 180 * M_PI;
 		float wspolczynnikcos = cos(radians);
@@ -361,6 +361,7 @@ void DrawNewLine(RownanieProstej* prosta,float kat)
 		printf("x1:%f,y1:%fx2:%f,y2:%f,a:%f,c:%f,stopnie:%f\n", prosta->xMin, prosta->xMax, prosta->yMin, prosta->yMax, prosta->a, prosta->c, prosta->stopnie);
 	
 }
+
 
 
 
@@ -469,8 +470,8 @@ int main(int argc, char* args[])
 		MovableObject Ball;
 		IMG_Init(IMG_INIT_PNG);
 		Ball.img = IMG_LoadTexture(renderer, "images/ball.PNG");
-		Ball._position.x = 583;
-		Ball._position.y = 469;
+		Ball._position.x = 30;
+		Ball._position.y = 30;
 		/*Ball._position.x = 30;
 		Ball._position.y = 50;*/
 		Ball._position.h = 20;
@@ -503,10 +504,10 @@ int main(int argc, char* args[])
 		//RownanieProstej dolnaKrawedz(0, 1, -500, -20, 800, -20, 800,true);//usunalem dolna bo nie jest potrzebna
 		//RownanieProstej lramie(0.357142, -1, 382.1428, 190, 330, 450, 500,true);
 		RownanieProstej lramie(0.357142, -1, 382.1428, 130, 270, 450, 500,true);
-		RownanieProstej lramieProsta(0.38461538461538464, -1, 400, 0, 130, 400, 450);
+		RownanieProstej lramieProsta(0.38461538461538464, -1, 400, 0, 130, 400, 450, true);
 		//RownanieProstej pramie(-0.357142, -1, 626.7857, 355, 495,  450, 500);
-		RownanieProstej pramie(-0.357142, -1, 626.7857, 310, 450,  450, 500);
-		RownanieProstej pramieProsta(-0.384615, 1, 226.923, 450,580,  400, 450);
+		RownanieProstej pramie(-0.35714285714285715, -1, 610.7142857142858, 310, 450,  450, 500,true);
+		RownanieProstej pramieProsta(-0.384615, -1, 623.0769230769231, 450,580,  400, 450);
 		RownanieProstej prawaKrawedzRura(1, 0, -603, -20, 800, 60, 600, true);
 		RownanieProstej dolnaKrawedzRury(0, 1, -489, 579, 603, -20, 800, true);
 		RownanieProstej skosRury(2.3333333333333335, -1, -1348.3333333333335, 579, 603, 30, 60);
@@ -550,6 +551,8 @@ int main(int argc, char* args[])
 		int heightText = 0;
 		int widthText2 = 0;
 		int heightText2 = 0;
+		
+
 
 		while (!quit)
 		{
@@ -702,7 +705,45 @@ int main(int argc, char* args[])
 	
 		//	Ball.Gravity();
 			Ball.SetVelocity();
+			
+		
 
+			if (Ball.velocity.getX() > 10)
+			{
+				Ball.velocity.setX(10);
+			}
+			if (Ball.velocity.getX() < -10)
+			{
+				Ball.velocity.setX(-10);
+			}
+			if (Ball.velocity.getY() > 10)
+			{
+				Ball.velocity.setY(10);
+			}
+			if (Ball.velocity.getY() < -10)
+			{
+				Ball.velocity.setY(-10);
+			}
+
+
+			if (Ball.acceleration.getX() > 1)
+			{
+				Ball.acceleration.setX(1);
+			}
+			if (Ball.acceleration.getX() < -1)
+			{
+				Ball.acceleration.setX(-1);
+			}
+			if (Ball.acceleration.getY() > 1)
+			{
+				Ball.acceleration.setY(1);
+			}
+			if (Ball.acceleration.getY() < -1)
+			{
+				Ball.acceleration.setY(-1);
+			}
+			
+			Ball.acceleration.setY(Ball.acceleration.getY()+0.015);
 			//printf("%f\n", Ball.position.y);
 
 
@@ -740,9 +781,10 @@ int main(int argc, char* args[])
 			tekst2 << "Punkty:0";
 			tekst3 << "Zacznij gre";
 			tekst4 << "spacja";
+		
 			if (Ball._position.x < 500)
 			{
-				kolaidery.erase(kolaidery.begin() + 6);
+				//kolaidery.erase(kolaidery.begin() + 6);
 				kolaidery.push_back(&prawaKrawedzD);
 				tekst3.str("");
 				tekst4.str("");
@@ -771,7 +813,7 @@ int main(int argc, char* args[])
 
 			SDL_RenderClear(renderer);// wyczyszczenie rendera
 			SDL_RenderCopy(renderer, table, NULL, &texr);//rysowanie tla
-			DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
+			//DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
 			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball._position);// rysowanie pilki
 			if (counterAnimation < 10)
 				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna1.PNG");
