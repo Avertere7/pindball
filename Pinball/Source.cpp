@@ -230,7 +230,7 @@ public:
 	vector2d acceleration;
 	SDL_Rect _position;
 	SDL_Texture *img = NULL;
-	std::vector<position> kolaidery;
+	position kolidery[8];
 	const float gravity = 0.5;
 	const float dt = 1 / 30.0; // przyrost czasu
 	MovableObject();
@@ -258,15 +258,14 @@ public:
 	
 	void setKolaider()
 	{
-		kolaidery.clear();
-		kolaidery.push_back(make_position(_position.x + 9, _position.y));
-		kolaidery.push_back(make_position(_position.x + 9, _position.y + 19));
-		kolaidery.push_back(make_position(_position.x, _position.y + 9));
-		kolaidery.push_back(make_position(_position.x + 19, _position.y + 9));
-		kolaidery.push_back(make_position(_position.x + 3, _position.y + 2));
-		kolaidery.push_back(make_position(_position.x + 16, _position.y + 2));
-		kolaidery.push_back(make_position(_position.x + 16, _position.y + 17));
-		kolaidery.push_back(make_position(_position.x + 3, _position.y + 17));
+		kolidery[0]=(make_position(_position.x + 9, _position.y));
+		kolidery[1] = (make_position(_position.x + 9, _position.y + 19));
+		kolidery[2] = (make_position(_position.x, _position.y + 9));
+		kolidery[3] = (make_position(_position.x + 19, _position.y + 9));
+		kolidery[4] = (make_position(_position.x + 3, _position.y + 2));
+		kolidery[5] = (make_position(_position.x + 16, _position.y + 2));
+		kolidery[6] = (make_position(_position.x + 16, _position.y + 17));
+		kolidery[7] = (make_position(_position.x + 3, _position.y + 17));
 	}
 };
 
@@ -489,19 +488,19 @@ int main(int argc, char* args[])
 
 		//RownanieProstej prawaKrawedz(1, 0, -569, -20, 800, -20, 800,true); prawy kolaider zastapiony dwmoa ponizej 
 		RownanieProstej prawaKrawedzG(1, 0, -579, -20, 800, 0,30, true);
-		RownanieProstej prawaKrawedzD(1, 0, -579,-20,800,67,600,true);
+		RownanieProstej prawaKrawedzD(1, 0, -579,-20,583,67,600,true);
 		RownanieProstej lewaKrawedz(1, 0, 0, -20, 800, -20, 800);
 		RownanieProstej gornaKrawedz(0, 1, 0, -20, 800, -20, 800);
 		//RownanieProstej dolnaKrawedz(0, 1, -500, -20, 800, -20, 800,true);//usunalem dolna bo nie jest potrzebna
-		RownanieProstej lramie(0.357142, -1, 382.1428, 190, 330, 450, 500);
+		RownanieProstej lramie(0.357142, -1, 382.1428, 190, 330, 450, 500,true);
 		RownanieProstej pramie(-0.357142, -1, 626.7857, 355, 495,  450, 500);
 		RownanieProstej prawaKrawedzRura(1, 0, -603, -20, 800, 60, 600, true);
 		RownanieProstej dolnaKrawedzRury(0, 1, -489, 579, 603, -20, 800, true);
-		RownanieProstej skosRury(1.25, 0, -693.75, 579, 603, 30, 60,true);
+		RownanieProstej skosRury(2.3333333333333335, -1, -1348.3333333333335, 579, 603, 30, 60);
 
 
-		//kolaidery.push_back(&prawaKrawedzD);
-		//kolaidery.push_back(&prawaKrawedzG); usunalem dodanie prawej krawedzi, bo myslalem ze jakos sie buguje-bo kolider z pilki jest po lewej stronie ale to nic nie dalo
+		kolaidery.push_back(&prawaKrawedzD);
+		kolaidery.push_back(&prawaKrawedzG); 
 		kolaidery.push_back(&lewaKrawedz);
 		kolaidery.push_back(&gornaKrawedz);
 		//kolaidery.push_back(&dolnaKrawedz);
@@ -623,24 +622,30 @@ int main(int argc, char* args[])
 
 			for (auto &collider : kolaidery)
 			{
-				if (collider->wykrycieKolizji(Ball._position.x, Ball._position.y))
-				{
-					Ball._position.x = Ball._position.x - Ball.velocity.getX();
-					Ball._position.y = Ball._position.y - Ball.velocity.getY();
-					/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lramie) { return 1 }
-					else { return-1 });*/
-					Ball.velocity.odbicieOdProstej(*collider);
-					Ball.acceleration.odbicieOdProstej(*collider);
+				for (int i = 0; i < 8; i++) {
 
-					Ball.velocity.setY(Ball.velocity.getY()*0.8);
-					Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
-					Ball.velocity.setX(Ball.velocity.getX()*0.8);
-					Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
+					if (collider->wykrycieKolizji(Ball.kolidery[i].x,Ball.kolidery[i].y))
 
+					{
+						Ball._position.x = Ball._position.x - Ball.velocity.getX();
+						Ball._position.y = Ball._position.y - Ball.velocity.getY();
+						/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lramie) { return 1 }
+						else { return-1 });*/
+						Ball.velocity.odbicieOdProstej(*collider);
+						Ball.acceleration.odbicieOdProstej(*collider);
+
+						Ball.velocity.setY(Ball.velocity.getY()*0.8);
+						Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+						Ball.velocity.setX(Ball.velocity.getX()*0.8);
+						Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
+
+
+					}
 				}
 			}
 
-
+			printf("kolajder x: \n %f\n", Ball.kolidery[0].x);
+			printf("kolajder y: \n %f\n", Ball.kolidery[0].y);
 				//if (pierwszaO.wykrycieKolizji(Ball._position.x, Ball._position.y))
 				//{
 				//	printf("predkosc x:%f \n", Ball.velocity.getX());
@@ -676,6 +681,7 @@ int main(int argc, char* args[])
 			//printf("predkosc Y:\n %f\n", Ball.acceleration.getY());
 			//printf("predkosc x: \n %f\n", Ball.acceleration.getX());
 
+			Ball.setKolaider();
 
 			SDL_Rect texr; texr.x = 0; texr.y = 0; texr.w = w * 2; texr.h = h * 2;
 		//	SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
