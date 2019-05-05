@@ -6,16 +6,22 @@ and may not be redistributed without written permission.*/
 #include <stdio.h>
 #include <SDL_image.h>
 #include <cmath>
-#include <string>
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <math.h>
+#include <SDL_ttf.h>
+#include <Windows.h>
+#include <sstream>
+#include <string>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const int maxspeed = 100;
-
+float stopnie = 0;
+//float newx = 330, newy = 500;
+int w, h;
 //Starts up SDL and creates window
 bool init();
 
@@ -27,24 +33,68 @@ void close();
 
 // test
 
+void DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centreY, int32_t radius)
+{
+	const int32_t diameter = (radius * 2);
+
+	int32_t x = (radius - 1);
+	int32_t y = 0;
+	int32_t tx = 1;
+	int32_t ty = 1;
+	int32_t error = (tx - diameter);
+
+	while (x >= y)
+	{
+		//  Each of the following renders an octant of the circle
+		SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
+		SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
+		SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
+		SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
+		SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
+		SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
+		SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
+		SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
+
+		if (error <= 0)
+		{
+			++y;
+			error += ty;
+			ty += 2;
+		}
+
+		if (error > 0)
+		{
+			--x;
+			tx += 2;
+			error += (tx - diameter);
+		}
+	}
+}
+
+
 struct position {
 	float x;
 	float y;
 };
-class Rownanie
+position make_position(float x, float y)
 {
-public:
-	bool  wykrycieKolizji()
-	{
-		printf("%s", "base");
-		return false;
-	}
-};
-class RownanieProstej  : public Rownanie{ //dla postaci ax+by+c=0
+	position p = { x,y };
+	return p;
+}
+//class Rownanie
+//{
+//public:
+//	bool  wykrycieKolizji()
+//	{
+//		printf("%s", "base");
+//		return false;
+//	}
+//};
+class RownanieProstej  { //dla postaci ax+by+c=0
 public:
 	float a, b, c, wektorNormalnyY, wektorNormalnyX; //spolczynniki funkcji
-	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
-	bool lewa;
+	float xMin, xMax, yMin, yMax,stopnie;// zakresy dzialania funkcji
+	bool lewa,rusza;
 
 	RownanieProstej(float a, float b, float c, float xMin, float xMax, float yMin, float yMax,bool lewa=false) {
 		this->a = a;
@@ -55,9 +105,10 @@ public:
 		this->yMax = yMax;
 		this->yMin = yMin;
 		this->lewa = lewa;
+		this->stopnie = 0;
+		setWektorNormalny();
 
-		wektorNormalnyX = (a / (a + b));
-		wektorNormalnyY = -(b / (a + b));
+	
 	}
 
 	 bool wykrycieKolizji(float x, float y)
@@ -88,7 +139,15 @@ public:
 		}
 		return false;
 	}
-
+	 void setWektorNormalny()
+	 {
+		 wektorNormalnyX = (a / (a + b));
+		 wektorNormalnyY = (b / (a + b));
+		 if (lewa) {
+			 wektorNormalnyX = -wektorNormalnyX;
+			 wektorNormalnyY = -wektorNormalnyY;
+		 }
+	}
 };
 
 class vector2d {
@@ -127,21 +186,51 @@ public:
 		normalna.setY(prosta.wektorNormalnyY);
 		float rx;
 		float ry;
-		rx = x - 2 * normalna.getX()*(normalna.getX()*x);
-		ry = y - 2 * normalna.getY()*(normalna.getY()*x);
-		printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
+		rx = x - 2 * (x*normalna.getX()+y*normalna.getY())*normalna.getX();
+		ry = y - 2 * (x*normalna.getX() + y * normalna.getY())*normalna.getY();
+		//printf("x:%f y:%f rx:%f  ry:%f \n", x, y,rx,ry);
+		
+			x = rx;
+			y = ry;
+		
+
+	}
+	
+	void odbicieOdOkregu(int Ox, int Oy, int px, int py) {
+
+		
+		float pomx=Ox-px;
+		float pomy=Oy - py;
+		float pom = pomx + pomy;
+		pomx = pomx / abs(pom)*2;
+		pomy = pomy / abs(pom)*2;
+
+		float rx;
+		float ry;
+		rx = x - 2 * (x*pomx + y * pomy)*pomx;
+		ry = y - 2 * (x*pomx + y * pomy)*pomy;
+
 		x = rx;
 		y = ry;
+
 	}
 
 };
+
+class AnimatedObject {
+public:
+	SDL_Rect _position;
+	SDL_Texture *img = NULL;
+};
+
 
 class MovableObject {
 public:
 	vector2d velocity;
 	vector2d acceleration;
-	SDL_Rect position;
-	SDL_Surface* image = NULL;
+	SDL_Rect _position;
+	SDL_Texture *img = NULL;
+	position kolidery[8];
 	const float gravity = 0.5;
 	const float dt = 1 / 30.0; // przyrost czasu
 	MovableObject();
@@ -149,27 +238,43 @@ public:
 	void SetAcceleration(float x, float y) {
 		float ay = acceleration.getY() + y;
 		float ax = acceleration.getX() + x;
+		if (ax > 0.5)
+			ax = 0.5;
+		if (ay > 0.5)
+			ay = 0.5;
 		acceleration.setY(ay);
 		acceleration.setX(ax);
 	}
 	void SetVelocity() {
 		float ax = velocity.getX() + acceleration.getX()*dt;
 		float ay = velocity.getY() + acceleration.getY()*dt;
+		if (ax > 5)
+			ax = 5;
+		if (ay > 5)
+			ay = 5;
 		velocity.setX(ax);
 		velocity.setY(ay);
-	/*	if (velocity.getX() > maxspeed)
-			velocity.setX(maxspeed);
-		if (velocity.getY() > maxspeed)
-			velocity.setY(maxspeed);*/
+
 
 	}
 	void Gravity() {
-		float g = acceleration.getY() + 0.02;
+		float g = acceleration.getY() + 0.5;
 		acceleration.setY(g);
 		acceleration.setX(acceleration.getX());
 
 	}
-
+	
+	void setKolaider()
+	{
+		kolidery[0]=(make_position(_position.x + 9, _position.y));
+		kolidery[1] = (make_position(_position.x + 9, _position.y + 19));
+		kolidery[2] = (make_position(_position.x, _position.y + 9));
+		kolidery[3] = (make_position(_position.x + 19, _position.y + 9));
+		kolidery[4] = (make_position(_position.x + 3, _position.y + 2));
+		kolidery[5] = (make_position(_position.x + 16, _position.y + 2));
+		kolidery[6] = (make_position(_position.x + 16, _position.y + 17));
+		kolidery[7] = (make_position(_position.x + 3, _position.y + 17));
+	}
 };
 
 MovableObject::MovableObject()
@@ -180,7 +285,7 @@ MovableObject::MovableObject()
 	velocity.setX(0.0f);
 }
 
-class  RownanieOkregu :Rownanie {
+class  RownanieOkregu  {
 public:
 	int xMin, xMax, yMin, yMax;// zakresy dzialania funkcji
 	float a, b, r; //(x-a)^2+(y-b)^2=r^
@@ -202,12 +307,61 @@ public:
 		RownanieProstej prosta(A, B, C, 0, 800, 0, 600);
 		return prosta;
 	}
-	bool wykrycieKolizji()
+	bool wykrycieKolizji(float wspX, float wspY)
 	{
+		if(((wspX-a)*(wspX - a))+((wspY-b)*(wspY - b))-(r*r)<=0)
+		{
+			return true;
+		}
+		/*if (sqrt(pow(wspX - a, 2) + pow(wspY - b, 2)) >= r)
+			return true;*/
+		
 		return false;
 	}
 
 };
+
+position GetNewPointByAngle(RownanieProstej* prosta,float kat) //xmax i ymax - 
+{
+	//printf("staryx:%f,staryy:%f\n", prosta->xMin, prosta->yMin);
+	// xmin ymin - srodek
+	//	((prosta->xMax - prosta->xMin)*cos( M_PI / 180 * 2) - (prosta->yMax - prosta->yMin)*sin( M_PI / 180 * 2) + prosta->xMin); - ogolny wzor
+
+		float roznicax = (prosta->xMax - prosta->xMin);
+		float roznicay = prosta->yMax - prosta->yMin;
+		float radians = kat / 180 * M_PI;
+		float wspolczynnikcos = cos(radians);
+		float wspolczynniksin = sin(radians);
+
+		float newx = (roznicax * wspolczynnikcos) - (roznicay*wspolczynniksin) + prosta->xMin;
+		float newy = (roznicay * wspolczynnikcos) - (roznicax * wspolczynniksin) + prosta->yMin;
+		//prosta->a = (newy - prosta->yMin) / (newx - prosta->xMin);
+	//	printf("roznicax:%f,roznicay:%f,wspX:%f,wspY:%f,newx:%f,radians:%f\n", roznicax,roznicay,wspolczynnikcos,wspolczynniksin,newx,radians);
+
+	
+		return make_position(newx, newy);
+	
+
+	
+
+}
+void DrawNewLine(RownanieProstej* prosta,float kat)
+{
+
+		if (prosta->stopnie == 0 && kat < 0 ||  prosta->stopnie ==20 && kat >0 )
+			return;
+		position newPosition = GetNewPointByAngle(prosta,kat);
+		prosta->xMax = round(newPosition.x);
+		prosta->yMax = round(newPosition.y);
+
+		prosta->a =  (prosta->yMin - prosta->yMax)/(prosta->xMin - prosta->xMax);
+		prosta->c = prosta->yMin - prosta->a*prosta->xMin;
+		prosta->setWektorNormalny();
+		prosta->stopnie += kat;
+		printf("x1:%f,y1:%fx2:%f,y2:%f,a:%f,c:%f,stopnie:%f\n", prosta->xMin, prosta->xMax, prosta->yMin, prosta->yMax, prosta->a, prosta->c, prosta->stopnie);
+	
+}
+
 
 
 
@@ -218,9 +372,12 @@ SDL_Window* Window = NULL;
 //The surface contained by the window
 SDL_Surface* gScreenSurface = NULL;
 
+SDL_Renderer *renderer = NULL;
+
+
 //The image we will load and show on the screen
-SDL_Surface* ball = NULL;
-SDL_Surface* table = NULL;
+SDL_Texture* table = NULL;
+int counterAnimation = 0;
 
 bool init()
 {
@@ -236,7 +393,8 @@ bool init()
 	else
 	{
 		//Create window
-		Window = SDL_CreateWindow("Pinball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		Window = SDL_CreateWindow("Pinball", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+		renderer = SDL_CreateRenderer(Window, -1, SDL_RENDERER_ACCELERATED);
 		if (Window == NULL)
 		{
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -248,6 +406,7 @@ bool init()
 			gScreenSurface = SDL_GetWindowSurface(Window);
 		}
 	}
+	TTF_Init();
 	return success;
 }
 
@@ -258,12 +417,14 @@ bool loadMedia()
 
 
 	//Load splash image
-	table = SDL_LoadBMP("images/table.bmp");
+	table = IMG_LoadTexture(renderer,"images/table.bmp");
 	if (table == NULL)
 	{
-		printf("Unable to load image %s! SDL Error: %s\n", "02_getting_an_image_on_the_screen/hello_world.bmp", SDL_GetError());
+		printf("Unable to load image %s! SDL Error: %s\n", "images/table.bmp", SDL_GetError());
 		success = false;
 	}
+
+
 
 	return success;
 }
@@ -271,20 +432,18 @@ bool loadMedia()
 void close()
 {
 	//Deallocate surface
-	SDL_FreeSurface(table);
-	table = NULL;
-	SDL_FreeSurface(ball);
-	ball = NULL;
-
+	
 	//Destroy window
 	SDL_DestroyWindow(Window);
 	Window = NULL;
-
-
+	
+	TTF_Quit();
 	IMG_Quit();
 	//Quit SDL subsystems
 	SDL_Quit();
+
 }
+
 
 int main(int argc, char* args[])
 {
@@ -310,42 +469,90 @@ int main(int argc, char* args[])
 
 		MovableObject Ball;
 		IMG_Init(IMG_INIT_PNG);
-		Ball.image = IMG_Load("images/ball.PNG");
-		Ball.position.x = 40;
-		Ball.position.y = 40;
-		Ball.position.h = Ball.image->h;
-		Ball.position.w = Ball.image->w;
+		Ball.img = IMG_LoadTexture(renderer, "images/ball.PNG");
+		Ball._position.x = 30;
+		Ball._position.y = 30;
+		/*Ball._position.x = 30;
+		Ball._position.y = 50;*/
+		Ball._position.h = 20;
+		Ball._position.w = 20;
 		Ball.velocity.setX(0);
 		Ball.velocity.setY(0);
+		Ball.setKolaider();
+
+		
+
+
+
+		AnimatedObject sprezyna;
+		IMG_Init(IMG_INIT_PNG);
+		sprezyna.img= IMG_LoadTexture(renderer, "images/sprezyna1.PNG");
+		sprezyna._position.x = 580;
+		sprezyna._position.y = 490;
+		sprezyna._position.h = 60;
+		sprezyna._position.w = 24;
+
 
 		std::vector<RownanieProstej*> kolaidery;
 		kolaidery.reserve(99);
-		RownanieProstej pierwsza(1, 0, -700, -5, 800, -5, 800,true);
-		RownanieProstej druga(1, 0, 0, -5, 800, -5, 800);
-		RownanieProstej trzecia(0, 1, 0, -5, 800, -5, 800);
-		RownanieProstej czwarta(0, 1, -500, -5, 800, -5, 800,true);
-		kolaidery.push_back(&pierwsza);
-		kolaidery.push_back(&druga);
-		kolaidery.push_back(&trzecia);
-		kolaidery.push_back(&czwarta);
+
+		//RownanieProstej prawaKrawedz(1, 0, -569, -20, 800, -20, 800,true); //prawy kolaider zastapiony dwmoa ponizej 
+		RownanieProstej prawaKrawedzG(1, 0, -579, -20, 800, 0,30, true);
+		RownanieProstej prawaKrawedzD(1, 0, -579,-20,583,67,600,true);
+		RownanieProstej lewaKrawedz(1, 0, 0, -20, 800, -20, 800);
+		RownanieProstej gornaKrawedz(0, 1, 0, -20, 800, -20, 800);
+		//RownanieProstej dolnaKrawedz(0, 1, -500, -20, 800, -20, 800,true);//usunalem dolna bo nie jest potrzebna
+		//RownanieProstej lramie(0.357142, -1, 382.1428, 190, 330, 450, 500,true);
+		RownanieProstej lramie(0.357142, -1, 382.1428, 130, 270, 450, 500,true);
+		RownanieProstej lramieProsta(0.38461538461538464, -1, 400, 0, 130, 400, 450, true);
+		//RownanieProstej pramie(-0.357142, -1, 626.7857, 355, 495,  450, 500);
+		RownanieProstej pramie(-0.35714285714285715, -1, 610.7142857142858, 310, 450,  450, 500,true);
+		RownanieProstej pramieProsta(-0.384615, -1, 623.0769230769231, 450,580,  400, 450);
+		RownanieProstej prawaKrawedzRura(1, 0, -603, -20, 800, 60, 600, true);
+		RownanieProstej dolnaKrawedzRury(0, 1, -489, 579, 603, -20, 800, true);
+		RownanieProstej skosRury(2.3333333333333335, -1, -1348.3333333333335, 579, 603, 30, 60);
+
+
+		kolaidery.push_back(&prawaKrawedzG); 
+		kolaidery.push_back(&lewaKrawedz);
+		kolaidery.push_back(&gornaKrawedz);
+		//kolaidery.push_back(&dolnaKrawedz);
+		kolaidery.push_back(&lramie);
+		kolaidery.push_back(&pramie);
+		kolaidery.push_back(&prawaKrawedzRura);
+		kolaidery.push_back(&skosRury);
+		kolaidery.push_back(&lramieProsta);
+		kolaidery.push_back(&pramieProsta);
+
 		//kolaidery.push_back(RownanieProstej(1,2,3,4,5,6,7));
 		
+		std::vector<RownanieOkregu*> kolaideryO;
+		kolaideryO.reserve(99);
+		RownanieOkregu pierwszaO(300, 300,100,0,800,0,600);
 
+		kolaideryO.push_back(&pierwszaO);
 		
-
 
 		//Apply the image
 		//SDL_BlitSurface(gHelloWorld, NULL, gScreenSurface, NULL);
-		SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
-		SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
+		//SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
+		//SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
 		//Update the surface
-		SDL_UpdateWindowSurface(Window);
+		
+		
+		//SDL_UpdateWindowSurface(Window);
 
 		//Wait two seconds
 		bool quit = false;
 		SDL_Event e;
-		int FPS = 30;
+		int FPS = 60;
 		int FrameStartTimeMs = 0;
+		int widthText = 0;
+		int heightText = 0;
+		int widthText2 = 0;
+		int heightText2 = 0;
+		
+
 
 		while (!quit)
 		{
@@ -354,20 +561,53 @@ int main(int argc, char* args[])
 			while (SDL_PollEvent(&e) != 0)
 			{
 
-				//if (e.type == SDL_KEYUP) {
+				if (e.type == SDL_KEYDOWN)
+				{
 
-				//if (e.key.keysym.sym == SDLK_DOWN)Ball.velocity.setY(Ball.velocity.getY() + 1);
-				//if (e.key.keysym.sym == SDLK_UP)Ball.velocity.setY(Ball.velocity.getY() - 1);
-				//if (e.key.keysym.sym == SDLK_RIGHT)Ball.velocity.setX(Ball.velocity.getX() + 1);
-				//if (e.key.keysym.sym == SDLK_LEFT)Ball.velocity.setX(Ball.velocity.getX() - 1);
-				//if (e.key.keysym.sym == SDLK_ESCAPE)quit = true;
+					if (e.key.keysym.sym == SDLK_DOWN)Ball.SetAcceleration(0, 0.5);
+					if (e.key.keysym.sym == SDLK_UP)Ball.SetAcceleration(0, -0.5);
+					if (e.key.keysym.sym == SDLK_RIGHT)Ball.SetAcceleration(0.5, 0);
+					if (e.key.keysym.sym == SDLK_LEFT)Ball.SetAcceleration(-0.5, 0);
+					if (e.key.keysym.sym == SDLK_ESCAPE)quit = true;
+					if (e.key.keysym.sym == SDLK_z)
+					{
+
+						DrawNewLine(&lramie, 2);
+						lramie.rusza = true;
+					}
+					if (e.key.keysym.sym == SDLK_x)
+					{
+						DrawNewLine(&pramie, 2);
+						pramie.rusza = true;
+					}
+					if (e.key.keysym.sym == SDLK_SPACE)
+					{
+						if (Ball._position.x == 583 && Ball._position.y == 469)
+						{
+							counterAnimation++;
+						}
+
+					}
+					
+				}
+				
+				if (e.type == SDL_KEYUP)
+				{
+					if (e.key.keysym.sym == SDLK_z)
+						lramie.rusza = false;
+					if (e.key.keysym.sym == SDLK_x)
+						pramie.rusza = false;
+					if (e.key.keysym.sym == SDLK_SPACE)
+					{
+						if (Ball._position.x == 583 && Ball._position.y == 469)
+						{
+							Ball.velocity.setY(-10);
+							counterAnimation = 0;
+						}
+					}
+				}
 
 
-				if (e.key.keysym.sym == SDLK_DOWN)Ball.SetAcceleration(0, 0.5);
-				if (e.key.keysym.sym == SDLK_UP)Ball.SetAcceleration(0, -0.5);
-				if (e.key.keysym.sym == SDLK_RIGHT)Ball.SetAcceleration(0.5, 0);
-				if (e.key.keysym.sym == SDLK_LEFT)Ball.SetAcceleration(-0.5, 0);
-				if (e.key.keysym.sym == SDLK_ESCAPE)quit = true;
 				//	}
 					//User requests quit
 				if (e.type == SDL_QUIT)
@@ -376,65 +616,242 @@ int main(int argc, char* args[])
 				}
 			}
 
-	/*		std::for_each(kolaidery.begin(), kolaidery.end(),
-				[](Rownanie * rownanie)
-			{ 
+			//Ball.setKolaider(); co do kolizji to zauwazylem ze np jak nacisne z to program czyta 2 uderzenia, jakby w ciagu jednej klatki 2 razy program byl wykonywany moze to miec tez zwiazek z tymi kolaiderami
+			//ze 2 razy sie odbija i gdy mamy te 8 punktów to nie do konca to dzia³a. Mo¿e trzeba cos zmieniæ w klatkach / sekunde
 
-				rownanie->wykrycieKolizj(Ball.position.x, Ball.position.y);
+			//[&] {
+			//	for (auto &collider : kolaidery)
+			//	{
+			//		for (auto &ballK : Ball.kolaidery)
+			//		{
+			//			if (collider->wykrycieKolizji(ballK.x, ballK.y))//Ball._position.x, Ball._position.y
+			//			{
+			//				printf("wykrycie kolizji na punkcie x:%f i y:%f \n", ballK.x-Ball._position.x, ballK.y-Ball._position.y);
+			//				Ball._position.x = ballK.x - Ball.velocity.getX();//  // Ball._position.x- Ball.velocity.getX();//
+			//				Ball._position.y = ballK.y - Ball.velocity.getY();// //Ball._position.y - Ball.velocity.getY();// 
+			//				/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lramie) { return 1 }
+			//				else { return-1 });*/
+			//				Ball.velocity.odbicieOdProstej(*collider);
+			//				Ball.acceleration.odbicieOdProstej(*collider);
 
-			}
-			);*/
+			//				Ball.velocity.setY(Ball.velocity.getY()*0.8);
+			//				Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+			//				Ball.velocity.setX(Ball.velocity.getX()*0.8);
+			//				Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
+			//				return;
+
+
+			//			}
+			//		}
+			//	}
+			//}();
+			//printf("Wyjscie \n");
+			
+
+			if (!lramie.rusza)
+				DrawNewLine(&lramie, -2);
+			if (!pramie.rusza)
+				DrawNewLine(&pramie, -2);
 
 			for (auto &collider : kolaidery)
 			{
-				if (collider->wykrycieKolizji(Ball.position.x, Ball.position.y))
-				{
-					Ball.velocity.odbicieOdProstej(*collider);
-					Ball.acceleration.odbicieOdProstej(*collider);
-				}
-			}
-		/*	if (pierwsza.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
-			{
-				Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
-				Ball.velocity.setX(-Ball.velocity.getX()*0.5);
-			}
-			else
-				if (druga.wykrycieKolizjiPrawej(Ball.position.x, Ball.position.y))
-				{
+				for (int i = 0; i < 8; i++) {
 
-					Ball.acceleration.setX(-Ball.acceleration.getX()*0.5);
-					Ball.velocity.setX(-Ball.velocity.getX()*0.5);
-				}
-				else
-					if (trzecia.wykrycieKolizjiPrawej(Ball.position.x, Ball.position.y))
+					if (collider->wykrycieKolizji(Ball.kolidery[i].x,Ball.kolidery[i].y))
+
 					{
+						Ball._position.x = Ball._position.x - Ball.velocity.getX();
+						Ball._position.y = Ball._position.y - Ball.velocity.getY();
+						/*Ball.acceleration.setY(-Ball.acceleration.getY()*0.5 + if (lramie) { return 1 }
+						else { return-1 });*/
+						Ball.velocity.odbicieOdProstej(*collider);
+						Ball.acceleration.odbicieOdProstej(*collider);
 
-						Ball.acceleration.setY(-Ball.acceleration.getY()*0.5);
-						Ball.velocity.setY(-Ball.velocity.getY()*0.5);
+						Ball.velocity.setY(Ball.velocity.getY()*0.8);
+						Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+						Ball.velocity.setX(Ball.velocity.getX()*0.8);
+						Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
+
+
 					}
-					else
-						if (czwarta.wykrycieKolizjiLewej(Ball.position.x, Ball.position.y))
-						{
+				}
+			}
 
-							Ball.acceleration.setY(-Ball.acceleration.getY()*0.1);
-							Ball.velocity.setY(-Ball.velocity.getY()*0.4);
-						}*/
+		/*	printf("kolajder x: \n %f\n", Ball.kolidery[0].x);
+			printf("kolajder y: \n %f\n", Ball.kolidery[0].y);*/
+				//if (pierwszaO.wykrycieKolizji(Ball._position.x, Ball._position.y))
+				//{
+				//	printf("predkosc x:%f \n", Ball.velocity.getX());
+				//	printf("predkosc Y:%f \n", Ball.velocity.getY());
 
-			Ball.Gravity();
+				//	Ball._position.x = Ball._position.x - Ball.velocity.getX();
+				//	Ball._position.y = Ball._position.y - Ball.velocity.getY();
+				//	
+				//	RownanieProstej pom = pierwszaO.prostopadlaWpunkcie(Ball._position.x, Ball._position.y);
+				//	Ball.velocity.odbicieOdProstej(pom);
+				//	Ball.acceleration.odbicieOdProstej(pom);
+				//	
+				//	Ball.velocity.setY(Ball.velocity.getY()*0.8);
+				//	Ball.acceleration.setY(Ball.acceleration.getY()*0.1);
+				//	Ball.velocity.setX(Ball.velocity.getX()*0.8);
+				//	Ball.acceleration.setX(Ball.acceleration.getX()*0.1);
+				//	printf("kolizja \n");
+				//	//printf("predkosc x:%f \n",Ball.velocity.getX());
+				//	//printf("predkosc Y:%f \n", Ball.velocity.getY());
+				//	printf("wspolrzedne x:%i \n", Ball._position.x);
+				//	printf("wspolrzedne y:%i \n", Ball._position.y);
+				//}
+				//
+	
+		//	Ball.Gravity();
 			Ball.SetVelocity();
+			
+		
 
+			if (Ball.velocity.getX() > 10)
+			{
+				Ball.velocity.setX(10);
+			}
+			if (Ball.velocity.getX() < -10)
+			{
+				Ball.velocity.setX(-10);
+			}
+			if (Ball.velocity.getY() > 10)
+			{
+				Ball.velocity.setY(10);
+			}
+			if (Ball.velocity.getY() < -10)
+			{
+				Ball.velocity.setY(-10);
+			}
+
+
+			if (Ball.acceleration.getX() > 1)
+			{
+				Ball.acceleration.setX(1);
+			}
+			if (Ball.acceleration.getX() < -1)
+			{
+				Ball.acceleration.setX(-1);
+			}
+			if (Ball.acceleration.getY() > 1)
+			{
+				Ball.acceleration.setY(1);
+			}
+			if (Ball.acceleration.getY() < -1)
+			{
+				Ball.acceleration.setY(-1);
+			}
+			
+			Ball.acceleration.setY(Ball.acceleration.getY()+0.015);
 			//printf("%f\n", Ball.position.y);
 
 
-			Ball.position.x = Ball.position.x + Ball.velocity.getX();
-			Ball.position.y = Ball.position.y + Ball.velocity.getY();
-			SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
-			SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball.position);
+			Ball._position.x = Ball._position.x + Ball.velocity.getX();
+			Ball._position.y = Ball._position.y + Ball.velocity.getY();
+			//printf("predkosc Y:\n %f\n", Ball.acceleration.getY());
+			//printf("predkosc x: \n %f\n", Ball.acceleration.getX());
 
+			Ball.setKolaider();
 
-			SDL_UpdateWindowSurface(Window);
+			SDL_Rect texr; texr.x = 0; texr.y = 0; texr.w = w * 2; texr.h = h * 2;
+		//	SDL_BlitSurface(table, NULL, gScreenSurface, NULL);
+			//SDL_BlitSurface(Ball.image, NULL, gScreenSurface, &Ball._position);
+			SDL_QueryTexture(Ball.img, NULL, NULL, &Ball._position.w,&Ball._position.h);
+			SDL_QueryTexture(table, NULL, NULL, &w,&h);
+			//text
+			SDL_Color color = { 0,0,0 };
+			SDL_Color colorW = { 0,0,0 };
+			SDL_Color colorR = { 255,0,0 };
+			SDL_Color colorG = { 0,255,0 };
+			SDL_Color colorB = { 0,0,255 };
+			TTF_Font * font = TTF_OpenFont("arial.ttf", 25);//czcionka
+			std::stringstream tekst, tekst2, tekst3, tekst4;//tekst
+
+			int time = SDL_GetTicks() / 100;
+			if (time % 7 == 0)
+				color = colorR;
+			else if (time % 3== 0)
+				color = colorG;
+			else if (time % 11 == 0)
+				color = colorB;
+			
+
+			tekst << "Czas:" << time;
+			tekst2 << "Punkty:0";
+			tekst3 << "Zacznij gre";
+			tekst4 << "spacja";
+		
+			if (Ball._position.x < 500)
+			{
+				//kolaidery.erase(kolaidery.begin() + 6);
+				kolaidery.push_back(&prawaKrawedzD);
+				tekst3.str("");
+				tekst4.str("");
+
+			}
+
+			SDL_Surface * surface = TTF_RenderText_Solid(font,tekst.str().c_str() , colorW);
+			SDL_Surface * surface2 = TTF_RenderText_Solid(font,tekst2.str().c_str() , colorW);
+			SDL_Surface * surface3 = TTF_RenderText_Solid(font,tekst3.str().c_str() , color);
+			SDL_Surface * surface4 = TTF_RenderText_Solid(font,tekst4.str().c_str() , color);
+			SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+			SDL_Texture * texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
+			SDL_Texture * texture3 = SDL_CreateTextureFromSurface(renderer, surface3);
+			SDL_Texture * texture4 = SDL_CreateTextureFromSurface(renderer, surface4);
+			SDL_QueryTexture(texture, NULL, NULL, &widthText, &heightText);
+			SDL_QueryTexture(texture2, NULL, NULL, &widthText, &heightText);
+			SDL_QueryTexture(texture3, NULL, NULL, &widthText, &heightText);
+			SDL_QueryTexture(texture4, NULL, NULL, &widthText, &heightText);
+		//	SDL_QueryTexture(texture_sprezyna, NULL, NULL, &widthText2, &heightText2);
+			SDL_Rect positionText = { 700,0,100,heightText };
+			SDL_Rect positionText2 = { 700,30,100,heightText };
+			SDL_Rect positionText3 = { 650,470,100,heightText };
+			SDL_Rect positionText4 = { 650,500,100,heightText };
+	
+			//SDL_Rect positionSprezyna = { 0,0,0,0 };
+
+			SDL_RenderClear(renderer);// wyczyszczenie rendera
+			SDL_RenderCopy(renderer, table, NULL, &texr);//rysowanie tla
+			//DrawCircle(renderer, 300, 300, 100);//rysowanie okregu
+			SDL_RenderCopy(renderer, Ball.img, NULL, &Ball._position);// rysowanie pilki
+			if (counterAnimation < 10)
+				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna1.PNG");
+			else if(counterAnimation>10 && counterAnimation<30)
+				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna2.PNG");
+			else if(counterAnimation>30 && counterAnimation < 50)
+				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna3.PNG");
+			else if(counterAnimation>50)
+				sprezyna.img = IMG_LoadTexture(renderer, "images/sprezyna4.PNG");
+			//printf("counter:%i", counterAnimation);
+			SDL_RenderCopy(renderer, sprezyna.img, NULL, &sprezyna._position);
+
+			SDL_RenderCopy(renderer, texture, NULL, &positionText);
+			SDL_RenderCopy(renderer, texture2, NULL, &positionText2);
+			SDL_RenderCopy(renderer, texture3, NULL, &positionText3);
+			SDL_RenderCopy(renderer, texture4, NULL, &positionText4);
+
+			
+
+			SDL_RenderDrawLine(renderer, lramie.xMin, lramie.yMin, lramie.xMax, lramie.yMax);// lramie
+			SDL_RenderDrawLine(renderer, lramieProsta.xMin, lramieProsta.yMin, lramieProsta.xMax, lramieProsta.yMax);// lramieProsta
+			SDL_RenderDrawLine(renderer, pramie.xMin, pramie.yMax, pramie.xMax, pramie.yMin);// pramie
+			SDL_RenderDrawLine(renderer, pramieProsta.xMin, pramieProsta.yMax, pramieProsta.xMax, pramieProsta.yMin);// pramieProsta
+			SDL_RenderDrawLine(renderer,579, 0, 579, 30);// pGkrawedz
+			SDL_RenderDrawLine(renderer, 579, 67, 579, 600);// pDkrawedz
+			SDL_RenderDrawLine(renderer, 603, 60, 603, 600);// pkrawedzRura
+			SDL_RenderDrawLine(renderer, 579, 489, 603, 489);// dkrawedzRura
+			SDL_RenderDrawLine(renderer, 579, 30, 603, 60);// skosRura	
+
+			//SDL_RenderDrawLine(renderer, 355, 500, 495, 450);// pramie
+			SDL_RenderPresent(renderer);// wyswietlenie
+
 			while (SDL_GetTicks() - FrameStartTimeMs < 1000 / FPS);
 
+			//SDL_DestroyTexture(sprezyna.img);
+			SDL_DestroyTexture(texture);
+			SDL_FreeSurface(surface);
+			TTF_CloseFont(font);
 		}
 
 
